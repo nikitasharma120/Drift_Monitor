@@ -1,0 +1,4 @@
+shift_type,recommended_detector,mean_sensitivity,sensitivity_ci_low,sensitivity_ci_high
+concept,concept_signal,1.0,0.8388698745050668,1.0
+covariate,pred_prop_psi,0.7000000000000001,0.5685352143314288,0.7670127354705979
+label,pred_prop_psi,0.9666666666666667,0.7931533847701236,0.9897918314346051

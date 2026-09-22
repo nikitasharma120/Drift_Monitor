@@ -1,0 +1,23 @@
+numpy==2.4.4
+pandas==3.0.2
+scikit-learn==1.8.0
+scipy==1.17.1
+matplotlib==3.10.0
+streamlit>=1.30
+
+# NOTE on version pinning: numpy/pandas/scikit-learn/scipy are pinned to
+# EXACT versions as defense-in-depth, but they were NOT the root cause of
+# a cross-environment reproducibility failure we hit during this project.
+# The actual root cause was that the reference LogisticRegression model
+# (reference_model.py) was fit on raw, unwinsorized features -- DebtRatio
+# sits at 130+ standard deviations from the mean even after StandardScaler
+# (scaling changes units, not leverage), which put the optimizer in a
+# numerically unstable regime sensitive to tiny floating-point differences
+# between machines/BLAS backends/library versions. reference_model.py now
+# winsorizes (clips to the 1st/99th percentile of the reference window)
+# before scaling, which fixed the instability directly -- verified by
+# re-running the full evaluation grid twice and getting identical results.
+# Keep the version pins anyway: they remove one more variable, but do not
+# assume they are sufficient on their own for a new dataset -- check for
+# extreme leverage points (see Section 2.5/2.7/2.9/2.10) first.
+pytest==8.3.4

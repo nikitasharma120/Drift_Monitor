@@ -1,0 +1,4 @@
+shift_type,psi_agg,kl_agg,centroid_dist,pred_prop_psi,concept_signal
+covariate,1.0,1.0,0.0,1.0,0.03333333333333333
+label,0.0,0.0,0.0,1.0,0.9916666666666667
+concept,0.0,0.0,0.0,0.19999999999999998,0.8333333333333334

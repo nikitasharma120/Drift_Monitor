@@ -1,0 +1,6 @@
+detector,per_batch_ms,per_batch_ms_std,one_time_fit_ms,throughput_batches_per_sec,approx_memory_kb
+psi_agg + kl_agg (shared cached bins),1.2153,0.2348,6.05,822.8,1.7
+centroid_dist,5.9947,1.8569,10.55,166.8,383.4
+pred_prop_psi,14.3795,1.8165,54.76,69.5,133.1
+concept_signal,26.0573,8.3397,14.76,38.4,3.5
+ALL 5 COMBINED (full pipeline per batch),47.6468,,80.06,21.0,521.7
