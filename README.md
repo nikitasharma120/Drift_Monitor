@@ -115,18 +115,12 @@ streamlit run drift_monitor/dashboard_app.py
 ```
 
 ### Step 6: View the Viva Presentation Slide Deck
-Open the broadcast-ready HTML presentation in your default browser:
+Open the formal PowerPoint presentation deck:
 ```bash
-# On Windows:
-start presentation.html
-
-# On macOS:
-open presentation.html
-
-# On Linux:
-xdg-open presentation.html
+# Open in PowerPoint / default viewer:
+start Drift_Monitor_Presentation.pptx
 ```
-*(Press `F` to toggle fullscreen during Google Meet screenshare; use `Right Arrow` or `Space` to advance slides).*
+*(16:9 widescreen presentation with embedded trade-off curves, speaker division, and presenter notes for viva defense).*
 
 ---
 
@@ -143,7 +137,7 @@ docker run --rm -v $(pwd)/report_assets_combined:/app/report_assets_combined \
 docker run --rm -p 8501:8501 drift-monitor
 ```
 
-For formal mathematical proofs, Taylor expansions, and deep failure mode dissections, see [REPORT.md](REPORT.md). For the slide-by-slide speaker script, see [PRESENTATION.md](PRESENTATION.md).
+For formal mathematical proofs, Taylor expansions, and deep failure mode dissections, see [REPORT.md](REPORT.md).
 
 ## 3. Repo Structure
 
@@ -360,8 +354,7 @@ credibility:
 | `drift_monitor/viz.py` | Visualizations, heatmaps, and the 4 continuous trade-off curves |
 | `drift_monitor/dashboard_app.py` | Interactive Streamlit multi-dataset monitoring dashboard |
 | `tests/test_core.py` | 21 automated unit tests (divergences, injection invariance, debouncing, Winsorizing, CIs, pure concept swaps) |
-| `PRESENTATION.md` | Full slide-by-slide script, speaker timing (14:30), and viva Q&A strategy for all 4 team members |
-| `presentation.html` | Broadcast-ready interactive HTML presentation deck for Google Meet screenshare (fullscreen with 'F') |
+| `Drift_Monitor_Presentation.pptx` | 16:9 PowerPoint presentation deck with speaker notes and embedded trade-off curves |
 | `report_assets_combined/` | Consolidated multi-dataset assets, recommendations, and 4 trade-off curves |
 | `datasets/*/generate_report_assets*.py` | Dataset-specific asset reproduction scripts |
 | `datasets/*/README.md` | Full dataset-specific details and derivations |
