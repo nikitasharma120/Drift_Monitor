@@ -61,6 +61,82 @@ def plot_monitor_dashboard(results_df, onset_batch, config, title="Drift Monitor
     return fig
 
 
+def plot_interactive_monitor_dashboard(results_df, onset_batch, config, title="Drift Monitor Live Telemetry"):
+    """Interactive 5-panel Plotly figure matching plot_monitor_dashboard with hover tooltips,
+    zoom capability, threshold indicators, and confirmed alert markers."""
+    import plotly.graph_objects as go
+    from plotly.subplots import make_subplots
+
+    fig = make_subplots(
+        rows=5, cols=1,
+        shared_xaxes=True,
+        vertical_spacing=0.045,
+        subplot_titles=[
+            "1. Feature Divergence: Max PSI & Max KL Divergence (P(X))",
+            "2. Latent Subspace Drift: PCA Centroid Distance",
+            "3. Output Probability Divergence: Pred-Prop PSI (f(X))",
+            "4. Supervised Performance Signal: Delta Brier (P(Y|X))",
+            "5. Confirmed Alerts (Debounced Streak Confirmation)"
+        ]
+    )
+
+    batches = results_df["batch"].values
+
+    # Panel 1: PSI & KL
+    fig.add_trace(go.Scatter(x=batches, y=results_df["psi_agg"], name="Max PSI",
+                             line=dict(color="#2563EB", width=2.2), mode="lines+markers", marker=dict(size=4)), row=1, col=1)
+    fig.add_trace(go.Scatter(x=batches, y=results_df["kl_agg"], name="Max KL",
+                             line=dict(color="#D97706", width=2.2), mode="lines+markers", marker=dict(size=4)), row=1, col=1)
+    fig.add_hline(y=config.alert_thresholds["psi_agg"]["moderate"], line=dict(color="#F59E0B", dash="dash", width=1.5), row=1, col=1)
+    fig.add_hline(y=config.alert_thresholds["psi_agg"]["significant"], line=dict(color="#EF4444", dash="dot", width=1.5), row=1, col=1)
+
+    # Panel 2: PCA Centroid
+    fig.add_trace(go.Scatter(x=batches, y=results_df["centroid_dist"], name="Centroid Dist",
+                             line=dict(color="#059669", width=2.2), mode="lines+markers", marker=dict(size=4)), row=2, col=1)
+    fig.add_hline(y=config.alert_thresholds["centroid_dist"]["moderate"], line=dict(color="#F59E0B", dash="dash", width=1.5), row=2, col=1)
+    fig.add_hline(y=config.alert_thresholds["centroid_dist"]["significant"], line=dict(color="#EF4444", dash="dot", width=1.5), row=2, col=1)
+
+    # Panel 3: Pred-Prop PSI
+    if "pred_prop_psi" in results_df.columns:
+        fig.add_trace(go.Scatter(x=batches, y=results_df["pred_prop_psi"], name="Pred-Prop PSI",
+                                 line=dict(color="#7C3AED", width=2.2), mode="lines+markers", marker=dict(size=4)), row=3, col=1)
+        fig.add_hline(y=config.alert_thresholds["pred_prop_psi"]["moderate"], line=dict(color="#F59E0B", dash="dash", width=1.5), row=3, col=1)
+        fig.add_hline(y=config.alert_thresholds["pred_prop_psi"]["significant"], line=dict(color="#EF4444", dash="dot", width=1.5), row=3, col=1)
+
+    # Panel 4: Concept Signal
+    if "concept_signal" in results_df.columns:
+        fig.add_trace(go.Scatter(x=batches, y=results_df["concept_signal"], name="Concept Signal",
+                                 line=dict(color="#DC2626", width=2.2), mode="lines+markers", marker=dict(size=4)), row=4, col=1)
+        fig.add_hline(y=config.alert_thresholds["concept_signal"]["moderate"], line=dict(color="#F59E0B", dash="dash", width=1.5), row=4, col=1)
+        fig.add_hline(y=config.alert_thresholds["concept_signal"]["significant"], line=dict(color="#EF4444", dash="dot", width=1.5), row=4, col=1)
+
+    # Panel 5: Alerts
+    alert_mask = results_df["any_alert"].values
+    alert_x = batches[alert_mask]
+    if len(alert_x) > 0:
+        fig.add_trace(go.Scatter(x=alert_x, y=[1] * len(alert_x), mode="markers",
+                                 marker=dict(symbol="triangle-down", size=14, color="#DC2626", line=dict(width=1, color="#7F1D1D")),
+                                 name="Confirmed Alert"), row=5, col=1)
+    else:
+        fig.add_trace(go.Scatter(x=[], y=[], mode="markers", name="No Alerts"), row=5, col=1)
+
+    # Vertical onset line across all 5 panels
+    for r in range(1, 6):
+        fig.add_vline(x=onset_batch, line=dict(color="#64748B", dash="dash", width=1.5), row=r, col=1)
+
+    fig.update_layout(
+        title=dict(text=title, font=dict(size=16, color="#0F172A", family="Arial, sans-serif")),
+        height=850,
+        template="plotly_white",
+        hovermode="x unified",
+        margin=dict(l=60, r=40, t=70, b=40),
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
+    )
+    fig.update_yaxes(row=5, col=1, visible=False, range=[0.5, 1.5])
+    fig.update_xaxes(row=5, col=1, title="Batch Index (Streaming Timeline)")
+    return fig
+
+
 def sensitivity_heatmap(summary, shift_types, severities, metrics, onset_filter, ax_row=None):
     sub = summary[summary["onset"] == onset_filter]
     if ax_row is None:
