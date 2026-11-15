@@ -149,17 +149,47 @@ def build_exhaustive_bible():
     # -----------------------------------------------------------------------
     story.append(Paragraph("1. The Production ML Dilemma: Silent Failure in Deployed Systems", styles['H1']))
     story.append(Paragraph(
-        "<b>1.1 Classical Software Engineering vs. Machine Learning Operations (MLOps):</b><br/>"
-        "In classical software engineering, functional defects declare themselves through explicit, observable signals: unhandled null pointer exceptions, HTTP 500 error responses, database deadlocks, network timeouts, or process segmentation faults. When an API server crashes or throws an exception, site reliability engineering (SRE) tools immediately trigger alerts, route traffic to fallback nodes, and log stack traces. "
-        "In stark contrast, deployed machine learning systems fail <i>silently</i>. When the real-world statistical distribution of incoming data diverges from the training baseline, the model inference service does not crash, throw an error, or log a failure. It continues accepting payloads, executing forward passes, returning HTTP 200 OK statuses, and outputting syntactically valid JSON prediction probabilities with low latency. However, its underlying mathematical mapping from inputs to semantic reality is shattered. Standard DevOps telemetry—such as CPU utilization, query per second (QPS), memory consumption, and network I/O—is fundamentally blind to statistical decay.",
+        "<b>1.1 The DS635 Course Paradigm: Traditional Software Systems vs. Machine Learning Systems:</b><br/>"
+        "In the foundational lectures of DS635 (Machine Learning Systems Engineering), we contrast classical programming with the machine learning paradigm. In traditional programming, humans write explicit logic: <i>Data + Rules &rarr; Program &rarr; Answers</i>. In machine learning, this relationship is fundamentally inverted: <i>Data + Answers &rarr; Training &rarr; Rules (Model)</i>. "
+        "This inversion fundamentally changes how production systems behave, degrade, and fail in the real world:",
         styles['Body']
     ))
+
+    sw_vs_ml_data = [
+        [Paragraph("Aspect", styles['TH']), Paragraph("Traditional Software Systems", styles['TH']), Paragraph("Machine Learning Systems", styles['TH'])],
+        [Paragraph("<b>Logic</b>", styles['TDBold']), Paragraph("Written explicitly by human programmers (Data + Rules &rarr; Answers)", styles['TD']), Paragraph("Derived statistically from data (Data + Answers &rarr; Rules / Model)", styles['TD'])],
+        [Paragraph("<b>Correctness</b>", styles['TDBold']), Paragraph("Deterministic; testable against discrete functional specifications", styles['TD']), Paragraph("Statistical; evaluated probabilistically against empirical metrics", styles['TD'])],
+        [Paragraph("<b>Failure Mode</b>", styles['TDBold']), Paragraph("Crashes, exceptions, HTTP 500s — loud, observable failures", styles['TD']), Paragraph("<b>Silent degradation</b> — system runs, serves HTTP 200 OK, but outputs rot", styles['TD'])],
+        [Paragraph("<b>Source of Truth</b>", styles['TDBold']), Paragraph("The source code and configuration files", styles['TD']), Paragraph("The code <i>and</i> the data <i>and</i> the model <i>and</i> hyperparameters", styles['TD'])],
+        [Paragraph("<b>Change Over Time</b>", styles['TDBold']), Paragraph("Behaves identically until source code is altered or patched", styles['TD']), Paragraph("Degrades continuously as real-world distributions drift away", styles['TD'])],
+        [Paragraph("<b>Debugging</b>", styles['TDBold']), Paragraph("Stack traces, step-through debuggers, breakpoints", styles['TD']), Paragraph("Data audits, slice-based error analysis, statistical ablation studies", styles['TD'])],
+        [Paragraph("<b>Versioning</b>", styles['TDBold']), Paragraph("Version control the source code (git commit hash)", styles['TD']), Paragraph("Version code + training dataset + feature pipeline + weights", styles['TD'])],
+    ]
+    t_sw_ml = Table(sw_vs_ml_data, colWidths=[usable_width*0.18, usable_width*0.41, usable_width*0.41])
+    t_sw_ml.setStyle(TableStyle([
+        ('BACKGROUND', (0,0), (-1,0), c_navy),
+        ('GRID', (0,0), (-1,-1), 0.5, c_border),
+        ('ROWBACKGROUNDS', (0,1), (-1,-1), [colors.white, colors.HexColor("#f8fafc")]),
+        ('TOPPADDING', (0,0), (-1,-1), 3),
+        ('BOTTOMPADDING', (0,0), (-1,-1), 3),
+        ('LEFTPADDING', (0,0), (-1,-1), 4),
+        ('RIGHTPADDING', (0,0), (-1,-1), 4),
+    ]))
+    story.append(t_sw_ml)
+    story.append(Spacer(1, 6))
+
+    story.append(Paragraph(
+        "<b>Key Course Principle — In ML Systems, Data is Code:</b> A critical defect in an ML service does not originate merely from software bugs; it lives in the dataset, in an evolving upstream feature pipeline, or in a stale model whose training assumptions have expired. As emphasized by Vijay Janapa Reddi (<i>Machine Learning Systems</i>): <i>'ML systems are 10% machine learning and 90% engineering.'</i> Where does an ML engineer's week actually go? Pipelines, debugging data quality, and continuous monitoring — not designing new neural network architectures. Drift Monitor is engineered specifically for this 90% systems engineering reality.",
+        styles['Body']
+    ))
+    story.append(Spacer(1, 4))
+
     story.append(Paragraph(
         "<b>1.2 The Ground Truth Paradox: Label Delays, Costs, and Verification Horizons:</b><br/>"
         "If ground truth target labels ($Y$) were available instantaneously for every inference request, detecting model degradation would be trivial: one would simply monitor real-time loss, accuracy, or Brier score. However, in enterprise machine learning deployments, ground truth labels arrive with significant delay, at high financial cost, or never at all:<br/>"
         "• <i>Credit Scoring &amp; Lending:</i> Whether a loan applicant defaults within a 24-month horizon cannot be known for up to two full years.<br/>"
-        "• <i>Fraud Detection:</i> Chargebacks and merchant dispute settlements take 30 to 90 days to appear in payment ledgers.<br/>"
-        "• <i>Medical Diagnostics:</i> Definitive biopsy and clinical progression outcomes require weeks of laboratory analysis.<br/>"
+        "• <i>Autonomous Driving (Waymo Case Study):</i> Sensor drift from changing seasonal sun angles or precipitation, repaved road asphalt altering lane detection, or urban growth shifting pedestrian flow cannot be detected without continuous input and outcome monitoring.<br/>"
+        "• <i>Adversarial Adaptation:</i> Spammers and fraudsters dynamically alter tactics against deployed spam or UPI fraud classifiers, causing model accuracy to plunge from 95% to 80% with zero changes to source code.<br/>"
         "• <i>Human Annotation Budget:</i> Labeling streaming data requires expensive manual domain expert review; companies can typically afford to verify only a tiny fraction (10% to 20%) of production traffic.",
         styles['Body']
     ))
@@ -625,9 +655,12 @@ def build_exhaustive_bible():
         styles['Body']
     ))
     story.append(Paragraph(
+        "• <b>Solving the DS635 Reproducibility Challenge (Lecture 1):</b> In the introductory lecture of DS635, the core MLOps reproducibility dilemma is posed: <i>'You trained a model last month at 94% accuracy. Today you re-ran the same notebook and got 89%. What changed? The data itself, library versions, random seeds, preprocessing steps, hardware nondeterminism — not just the code.'</i> In ML systems, reproducibility demands pinning every layer of the stack. Drift Monitor guarantees strict determinism via:<br/>"
+        "&nbsp;&nbsp;&bull; <i>Pinned Seeds:</i> Fixed pseudo-random seeds across batch slicing, trickle sampling, and Monte Carlo runs.<br/>"
+        "&nbsp;&nbsp;&bull; <i>Provenance Artifacts:</i> Auto-generated <code>system_info.json</code> capturing exact CPU architecture, OS, Python runtime, and numpy/scipy/scikit-learn wheel hashes.<br/>"
+        "&nbsp;&nbsp;&bull; <i>Docker Containerization (<code>Dockerfile</code>):</i> Pinned to <code>python:3.12-slim</code> with frozen requirements, eliminating 'works on my machine' environmental variance.<br/>"
         "• <b>Interactive Telemetry Dashboard (<code>drift_monitor/dashboard_app.py</code>):</b> A clean, restrained 2-tab Streamlit application live at <code>http://localhost:8501</code>. Features a 520px compact 2-panel Plotly layout (Input Drift on Top, Model Degradation on Bottom), instant 1-line plain-English diagnoses, and sub-50ms reactive caching via <code>@st.cache_data</code> and <code>@st.cache_resource</code>.<br/>"
         "• <b>Comprehensive Test Suite (23 Tests in <code>tests/test_core.py</code>):</b> Fully automated unit tests covering Kolmogorov-Smirnov baseline comparisons, gold-standard hand-labelled precision/recall checks (Precision=1.00, Recall&ge;0.90), deduplicated quantile handling, and streaming edge cases.<br/>"
-        "• <b>Docker Containerization (<code>Dockerfile</code>):</b> Built on <code>python:3.12-slim</code> with exact pinned dependencies, eliminating 'works on my machine' environmental drift.<br/>"
         "• <b>Deterministic Reproduction:</b> Executing <code>python reproduce_all.py</code> regenerates every report asset, recommendation table, and trade-off curve across all three datasets from scratch.",
         styles['Body']
     ))
