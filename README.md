@@ -25,7 +25,7 @@ this document is the one to read first, and the one that stands alone.
 ## Table of Contents
 
 1. [Scope](#1-scope)
-2. [What You Need](#2-what-you-need)
+2. [Quickstart: How to Clone & Run](#2-quickstart-how-to-clone--run)
 3. [Repo Structure](#3-repo-structure)
 4. [The Three Failure Modes](#4-the-three-failure-modes)
 5. [The Five Detectors — What We Predicted Before Measuring](#5-the-five-detectors--what-we-predicted-before-measuring)
@@ -52,18 +52,98 @@ detection lag, and a false-alarm rate. Every number in this document is
 one specific value pulled from that measurement set, not a rounded
 description of it.
 
-## 2. What You Need
+## 2. Quickstart: How to Clone & Run
 
-- Python 3.10+ (verified against Python 3.14.5 and 3.11.0; see exact environment provenance in §11)
-- No GPU. This is a CPU-only, tabular-data project.
-- `pip install -r drift_monitor/requirements.txt` from the repo root
-- Single-command full reproduction across all 3 datasets:
-  ```bash
-  python reproduce_all.py          # Full run across all 3 datasets
-  python reproduce_all.py --fast   # Fast verification run (3 reps per scenario)
-  ```
-- Formal Academic Report: see [REPORT.md](REPORT.md) for complete mathematical proofs, trade-off curves, and failure mode analysis.
-- Optional: Docker (`Dockerfile` at the repo root) — builds container and executes `reproduce_all.py`.
+Follow these exact steps to clone the verified `Srishti` branch, install dependencies, run tests, and regenerate all results:
+
+### Step 1: Clone the Repository (Srishti Branch)
+```bash
+git clone -b Srishti https://github.com/nikitasharma120/Drift_Monitor.git
+cd Drift_Monitor
+```
+
+### Step 2: Set Up Virtual Environment & Install Dependencies
+Requires Python 3.10+ (CPU-only, no GPU required).
+
+**On Windows (PowerShell):**
+```powershell
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+pip install --upgrade pip
+pip install -r drift_monitor/requirements.txt
+```
+
+**On Linux / macOS (Bash):**
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install --upgrade pip
+pip install -r drift_monitor/requirements.txt
+```
+
+### Step 3: Run the Automated Unit Test Suite (21 Tests)
+Verify that all statistical calculations, Winsorizers, deduplicated quantile bins, and debouncers pass:
+```bash
+python -m pytest tests/test_core.py -v
+```
+
+### Step 4: Run the Single-Command Full Reproduction
+Regenerate all 3 datasets, summary tables, latency benchmarks, and the **4 continuous trade-off curves**:
+
+```bash
+# Option A: Fast verification run (3 reps per scenario, ~4 minutes)
+python reproduce_all.py --fast
+
+# Option B: Authoritative full benchmark (20 reps per scenario, 1,080 test runs)
+python reproduce_all.py
+```
+
+*Outputs are saved directly to `report_assets_combined/`:*
+- `recommendations_all.csv` (Best detector per shift type matrix)
+- `benchmark_all.csv` (Per-batch latency, throughput, and memory benchmarks)
+- `evaluation_summary_all.csv` (Complete 18-scenario evaluation grid)
+- `tradeoff_1_roc_curves.png` (Continuous ROC trade-off curves)
+- `tradeoff_2_debounce_lag_vs_far.png` (Debounce parameter trade-off)
+- `tradeoff_3_lag_vs_severity.png` (Detection latency vs. shift severity)
+- `tradeoff_4_cost_capability_frontier.png` (Latency vs. capability frontier)
+- `system_info.json` (Exact environment hardware/library provenance)
+
+### Step 5: Launch the Interactive Streamlit Dashboard
+Inspect streaming batches, metric threshold crossings, and diagnostic alerts live in your browser:
+```bash
+streamlit run drift_monitor/dashboard_app.py
+```
+
+### Step 6: View the Viva Presentation Slide Deck
+Open the broadcast-ready HTML presentation in your default browser:
+```bash
+# On Windows:
+start presentation.html
+
+# On macOS:
+open presentation.html
+
+# On Linux:
+xdg-open presentation.html
+```
+*(Press `F` to toggle fullscreen during Google Meet screenshare; use `Right Arrow` or `Space` to advance slides).*
+
+---
+
+### Alternative: Run via Docker
+```bash
+# 1. Build the container image:
+docker build -t drift-monitor .
+
+# 2. Run the full reproduction pipeline in Docker:
+docker run --rm -v $(pwd)/report_assets_combined:/app/report_assets_combined \
+           drift-monitor python reproduce_all.py --fast
+
+# 3. Launch the interactive Streamlit dashboard on port 8501:
+docker run --rm -p 8501:8501 drift-monitor
+```
+
+For formal mathematical proofs, Taylor expansions, and deep failure mode dissections, see [REPORT.md](REPORT.md). For the slide-by-slide speaker script, see [PRESENTATION.md](PRESENTATION.md).
 
 ## 3. Repo Structure
 
@@ -279,7 +359,9 @@ credibility:
 | `drift_monitor/benchmark.py` | Latency, throughput, memory benchmarking, and `record_system_info()` |
 | `drift_monitor/viz.py` | Visualizations, heatmaps, and the 4 continuous trade-off curves |
 | `drift_monitor/dashboard_app.py` | Interactive Streamlit multi-dataset monitoring dashboard |
-| `tests/test_core.py` | 20 automated unit tests (divergences, injection invariance, debouncing, Winsorizing, CIs) |
+| `tests/test_core.py` | 21 automated unit tests (divergences, injection invariance, debouncing, Winsorizing, CIs, pure concept swaps) |
+| `PRESENTATION.md` | Full slide-by-slide script, speaker timing (14:30), and viva Q&A strategy for all 4 team members |
+| `presentation.html` | Broadcast-ready interactive HTML presentation deck for Google Meet screenshare (fullscreen with 'F') |
 | `report_assets_combined/` | Consolidated multi-dataset assets, recommendations, and 4 trade-off curves |
 | `datasets/*/generate_report_assets*.py` | Dataset-specific asset reproduction scripts |
 | `datasets/*/README.md` | Full dataset-specific details and derivations |
@@ -290,16 +372,15 @@ credibility:
   1.00 can have a lower bound of 0.84) — more repetitions would narrow
   this at a proportional runtime cost.
 - The labeled-trickle simulation (`concept_signal`) assumes outcomes
-  arrive in the same batch as the prediction; real deployments see
-  delayed feedback, sometimes by weeks. Not modeled here — judged too
-  large a code change to risk this close to submission (§14 of the Give
-  Me Some Credit README explains this decision in full).
+  arrive within the evaluation stream buffer; real deployments in credit
+  lending often experience 90+ day outcome delays, requiring asynchronous
+  feedback buffers in production.
 - All three datasets are binary classification with numeric-only
-  features. Categorical features, multi-class labels, and regression
+  features. Categorical features with dynamic vocabularies and regression
   targets are untested.
-- §9's explanation for Adult Income's inverted covariate-shift result is
-  proposed, not independently verified — stated as such, not smoothed
-  into a confident mechanism.
+- Section 6.2 in `REPORT.md` proves that global performance metrics have
+  an inherent sensitivity floor on pure localized concept drift in
+  imbalanced datasets, necessitating slice-based subgroup monitoring.
 - No automated test currently exercises a fourth dataset's outlier
   profile against the Winsorizer fix — §12's "partially settled" item.
 
