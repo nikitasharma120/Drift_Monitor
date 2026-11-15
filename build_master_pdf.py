@@ -203,6 +203,65 @@ def build_exhaustive_bible():
         "No single statistical detector or isolated telemetry stream can protect a deployed machine learning service. A production-ready monitoring architecture must deploy a <b>3-Tier Defense-in-Depth Pipeline</b> that integrates: (1) high-speed unsupervised input feature gating ($P(X)$), (2) frozen reference model predicted-proportion tracking ($P(\\hat{Y})$) to exploit model weight amplification, and (3) an asynchronous supervised verification gate operating over a realistic delayed 20% labeled trickle ($P(Y|X)$), all governed by a 2-stage temporal debounce confirmation filter to eliminate spurious engineering alerts.",
         styles['Body']
     ))
+    story.append(Spacer(1, 4))
+
+    story.append(Paragraph(
+        "<b>1.5 Direct Curriculum Alignment with DS635 (Machine Learning Systems Engineering):</b><br/>"
+        "Drift Monitor is not an isolated theoretical exercise; it directly embodies the curriculum, lecture slides, and engineering principles taught by Prof. Ankush Chander in DS635:",
+        styles['Body']
+    ))
+
+    lec_align_data = [
+        [Paragraph("DS635 Lecture Module", styles['TH']), Paragraph("Core Principle Taught in Class", styles['TH']), Paragraph("Direct Implementation in Drift Monitor", styles['TH'])],
+        [
+            Paragraph("<b>Lecture 0:<br/>Course Overview</b>", styles['TDBold']),
+            Paragraph("Traditional software fails loudly (crashes, HTTP 500); ML systems fail silently (predictions rot while returning HTTP 200 OK).", styles['TD']),
+            Paragraph("Drift Monitor is built explicitly to solve silent failure: it inspects live inference streams and detects statistical decay that DevOps metrics miss.", styles['TD'])
+        ],
+        [
+            Paragraph("<b>Lecture 0:<br/>Data is Code</b>", styles['TDBold']),
+            Paragraph("'In ML systems, data is code.' Bugs live in evolving data distributions and stale models, not just in source code.", styles['TD']),
+            Paragraph("We implement statistical testing (PSI, KL, Brier) directly on streaming batches, treating distribution shift as a first-class production bug.", styles['TD'])
+        ],
+        [
+            Paragraph("<b>Lecture 1:<br/>The ML Lifecycle</b>", styles['TDBold']),
+            Paragraph("The 6-stage lifecycle: Data &rarr; Train &rarr; Eval &rarr; Deploy &rarr; <b>MONITOR</b> &rarr; <b>RETRAIN</b>. 'ML systems are 10% ML, 90% engineering.'", styles['TD']),
+            Paragraph("Drift Monitor bridges Stage 5 (Monitoring) and Stage 6 (Retraining) via an automated diagnostic engine (<code>classify_shift</code>) that prevents blind retraining.", styles['TD'])
+        ],
+        [
+            Paragraph("<b>Lecture 1:<br/>Reproducibility</b>", styles['TDBold']),
+            Paragraph("'94% last month, 89% today with zero code changes. What changed? Pin data, libraries, seeds, preprocessing, hardware nondeterminism.'", styles['TD']),
+            Paragraph("We enforce strict determinism: pinned random seeds across 1,080 runs, fixed reference quantile edges, <code>system_info.json</code>, and pinned Docker container.", styles['TD'])
+        ],
+        [
+            Paragraph("<b>Lecture 1:<br/>Real-World Drift</b>", styles['TDBold']),
+            Paragraph("Waymo sensor drift (seasonal light, precipitation, repaved asphalt); adversarial drift (spammers adapting 95% &rarr; 80% without code changes).", styles['TD']),
+            Paragraph("We evaluate across 3 diverse domains (financial credit, card default, census income) under both abrupt step and gradual linear ramp dynamics.", styles['TD'])
+        ],
+        [
+            Paragraph("<b>Lectures 9/10 &amp; 29:<br/>Serving Budgets</b>", styles['TDBold']),
+            Paragraph("Serving constraints: Latency budgets and throughput decide what runs where (e.g., why mobile keyboards don't call GPT-4 for every keystroke).", styles['TD']),
+            Paragraph("We enforce strict latency tiers: Tier 1 runs in <b>1.3 ms</b> ($0 label cost), and the full combined suite runs in <b>51.0 ms</b> (~20 batches/sec, 1.26 MB RAM).", styles['TD'])
+        ],
+        [
+            Paragraph("<b>Lectures 19–24:<br/>Outlier Scale</b>", styles['TDBold']),
+            Paragraph("Numerical representation, scale, and outlier sensitivity.", styles['TD']),
+            Paragraph("We prove sample &sigma; breaks down on heavy tails (<code>DebtRatio</code> &gt; 100,000 has 0% breakdown point) and enforce robust $\\text{IQR}/1.349$ scaling.", styles['TD'])
+        ]
+    ]
+    t_lec = Table(lec_align_data, colWidths=[usable_width*0.22, usable_width*0.38, usable_width*0.40])
+    t_lec.setStyle(TableStyle([
+        ('BACKGROUND', (0,0), (-1,0), c_navy),
+        ('GRID', (0,0), (-1,-1), 0.5, c_border),
+        ('ROWBACKGROUNDS', (0,1), (-1,-1), [colors.white, colors.HexColor("#f8fafc")]),
+        ('TOPPADDING', (0,0), (-1,-1), 3),
+        ('BOTTOMPADDING', (0,0), (-1,-1), 3),
+        ('LEFTPADDING', (0,0), (-1,-1), 4),
+        ('RIGHTPADDING', (0,0), (-1,-1), 4),
+    ]))
+    story.append(t_lec)
+    story.append(Spacer(1, 6))
+
     story.append(make_callout(
         "<b>THE OPERATIONAL IMPERATIVE:</b> Detecting distribution shift is not merely about finding that something moved; it is about diagnosing <i>which component</i> of the joint distribution moved so that engineering teams take the correct remediation action (pipeline fix vs. threshold recalibration vs. full model retraining).",
         title="SYSTEM ARCHITECTURE MOTIVATION",
@@ -800,7 +859,17 @@ def build_exhaustive_bible():
     ))
     story.append(Spacer(1, 4))
 
-    story.append(Paragraph("<b>11.2 Ten Inviolable Operational Facts to Memorize:</b>", styles['BodyBold']))
+    story.append(Paragraph("<b>11.2 Four Core Viva Defense Talking Points Citing DS635 Lectures:</b>", styles['BodyBold']))
+    story.append(Paragraph(
+        "1. <i>The Silent Failure Problem (Lecture 0):</i> In traditional software engineering, services fail loudly with crashes, segfaults, and HTTP 500s. In ML systems, the failure mode is <b>silent degradation</b>: the service returns HTTP 200 OK with valid JSON while predictions rot. Drift Monitor is our system that notices.<br/>"
+        "2. <i>The 90% Systems Reality (Lecture 1):</i> As noted by Vijay Janapa Reddi, 'ML systems are 10% machine learning and 90% engineering.' Where does the engineer's week go? Pipelines, debugging data quality, and monitoring. Drift Monitor targets this 90% systems reality.<br/>"
+        "3. <i>The Reproducibility Challenge (Lecture 1 Warm-up):</i> Why did the notebook drop from 94% to 89% with zero code changes? Data drift, library drift, seed variance, hardware nondeterminism. We solved this with pinned seeds, reference quantile caching, <code>system_info.json</code>, and Docker.<br/>"
+        "4. <i>Serving Latency Budgets (Lectures 9/10 &amp; 29):</i> Deployment constraints dictate what can run in production. We designed a 3-tier architecture whose unsupervised Tier 1 runs in <b>1.3 ms</b>, only paying the 20% labeled trickle latency (20.6 ms) when drift is suspected.",
+        styles['Body']
+    ))
+    story.append(Spacer(1, 4))
+
+    story.append(Paragraph("<b>11.3 Ten Inviolable Operational Facts to Memorize:</b>", styles['BodyBold']))
     checklist_items = [
         "<b>1. Project Identity:</b> Drift Monitor | Branch: <code>Srishti</code> | Team: Sanjana Nathani, Nikita Sharma, Anish Karmakar, Srishti Lamba.",
         "<b>2. Shift Taxonomy:</b> Covariate ($P(X)$), Label ($P(Y)$), Concept Drift ($P(Y|X)$). Unsupervised monitors cannot detect pure concept drift.",
@@ -818,7 +887,7 @@ def build_exhaustive_bible():
 
     story.append(Spacer(1, 6))
 
-    story.append(Paragraph("<b>11.3 Mathematical Notation &amp; Symbol Glossary:</b>", styles['BodyBold']))
+    story.append(Paragraph("<b>11.4 Mathematical Notation &amp; Symbol Glossary:</b>", styles['BodyBold']))
     glossary_data = [
         [Paragraph("Symbol", styles['TH']), Paragraph("Definition &amp; Role in Drift Monitor", styles['TH']), Paragraph("Operational Baseline / Range", styles['TH'])],
         [Paragraph("<b>P(X), P(Y)</b>", styles['TDBold']), Paragraph("Input feature marginal and target class prior probability distribution.", styles['TD']), Paragraph("Empirical frequencies across stream batches.", styles['TD'])],
@@ -842,7 +911,7 @@ def build_exhaustive_bible():
     story.append(t_gloss)
     story.append(Spacer(1, 6))
 
-    story.append(Paragraph("<b>11.4 Operational CLI Commands Quick Reference:</b>", styles['BodyBold']))
+    story.append(Paragraph("<b>11.5 Operational CLI Commands Quick Reference:</b>", styles['BodyBold']))
     cli_snippet = (
         "# 1. Execute full automated verification suite (23 unit tests):\n"
         "python -m pytest tests/test_core.py -v\n\n"
