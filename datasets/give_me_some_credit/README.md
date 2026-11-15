@@ -176,9 +176,11 @@ they weren't enough — a story explained fully in §8 and §9.
    compares two sets of numbers and outputs a single score representing
    "how different is this new batch's distribution from what I saw
    before?" A bigger number means more difference.
-2. **KL divergence** — mathematically similar to PSI, but more sensitive
-   to differences in rare, unusual values rather than the bulk of the
-   data.
+2. **KL divergence** — the one-directional component of PSI ($D_{\text{KL}}(P \parallel Q)$).
+   Mathematically, $\text{PSI} = D_{\text{KL}}(P \parallel Q) + D_{\text{KL}}(Q \parallel P)$
+   (the symmetrized Jeffreys divergence, approximately $2 D_{\text{KL}}$). Because
+   $\text{PSI} \ge D_{\text{KL}}$ always, under identical thresholds KL requires roughly
+   twice the distribution shift to trigger, making it strictly more conservative.
 3. **Embedding drift** — instead of checking one feature at a time, this
    compresses all 10 features into a simplified 3-number summary (using a
    technique called **PCA**, Principal Component Analysis) and checks

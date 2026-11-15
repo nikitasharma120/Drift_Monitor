@@ -1,11 +1,8 @@
 """
-dashboard_app.py — polished interactive dashboard for "A System That Notices"
+dashboard_app.py — interactive dashboard for "A System That Notices"
 
 Run with:
     streamlit run drift_monitor/dashboard_app.py
-
-Lets you pick a shift scenario from the sidebar, watch the monitor detect
-(or fail to detect) it batch by batch, and browse the full evaluation grid.
 """
 
 import sys
@@ -17,6 +14,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 from drift_monitor import DriftMonitorConfig, load_dataset
+from drift_monitor.config import get_preset_config
 from drift_monitor.injection import make_batches, inject
 from drift_monitor.metrics import EmbeddingDriftDetector
 from drift_monitor.reference_model import train_reference_model, PredictedProportionDetector
@@ -28,69 +26,63 @@ from drift_monitor.viz import plot_monitor_dashboard, sensitivity_heatmap, metri
 st.set_page_config(page_title="A System That Notices", layout="wide")
 
 # ---------------------------------------------------------------------------
-# Cached setup
-# ---------------------------------------------------------------------------
-
-@st.cache_resource
-def get_config():
-    return DriftMonitorConfig()
-
-
-@st.cache_data
-def get_data(csv_path: str):
-    config = get_config()
-    config.csv_path = csv_path
-    return load_dataset(config)
-
-
-@st.cache_resource
-def get_reference_and_detector(csv_path: str):
-    config = get_config()
-    df = get_data(csv_path)
-    ref_batches = make_batches(df, config.n_batches, seed=0)
-    reference_df = pd.concat(ref_batches[:config.onset_batch]).reset_index(drop=True)
-    detector = EmbeddingDriftDetector(config.features, config.embedding_components).fit(reference_df)
-    ref_model = train_reference_model(reference_df, config)
-    pred_detector = PredictedProportionDetector(ref_model, config.features).fit(reference_df)
-    perf_detector = PerformanceMonitor(ref_model, config.features, config.label_col, config.labeled_trickle_fraction).fit(reference_df)
-    return reference_df, detector, pred_detector, perf_detector
-
-
-@st.cache_data
-def get_grid_summary(csv_path: str, n_reps: int):
-    config = get_config()
-    config.n_reps = n_reps
-    df = get_data(csv_path)
-    records = run_full_grid(df, config)
-    return summarize_grid(records)
-
-
-# ---------------------------------------------------------------------------
-# Sidebar
+# Sidebar Dataset Configuration
 # ---------------------------------------------------------------------------
 
 st.sidebar.title("A System That Notices")
 st.sidebar.caption("DS635 — Distribution Shift Monitor")
 
-csv_path = st.sidebar.text_input("CSV path (blank = synthetic demo data)", value="")
-config = get_config()
-config.csv_path = csv_path
+dataset_choice = st.sidebar.selectbox(
+    "Choose Benchmark Dataset",
+    [
+        "Give Me Some Credit (cs-training.csv)",
+        "Taiwan Credit Default (UCI_Credit_Card.csv)",
+        "Adult Census Income (adult_income.csv)",
+        "Synthetic Demo Data"
+    ],
+    index=0
+)
 
-st.sidebar.header("Scenario")
-shift_type = st.sidebar.selectbox("Shift type", config.shift_types, index=0)
+# Resolve preset configuration and default paths
+repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if dataset_choice.startswith("Give Me Some Credit"):
+    preset_key = "give_me_some_credit"
+    default_path = os.path.join(repo_root, "datasets", "give_me_some_credit", "cs-training.csv")
+elif dataset_choice.startswith("Taiwan Credit"):
+    preset_key = "taiwan_credit_default"
+    default_path = os.path.join(repo_root, "datasets", "taiwan_credit_default", "UCI_Credit_Card.csv")
+elif dataset_choice.startswith("Adult Census"):
+    preset_key = "adult_income"
+    default_path = os.path.join(repo_root, "datasets", "adult_income", "adult_income.csv")
+else:
+    preset_key = "synthetic"
+    default_path = ""
+
+csv_path = st.sidebar.text_input("CSV Path", value=default_path)
+config = get_preset_config(preset_key, csv_path=csv_path)
+
+st.sidebar.header("Shift Scenario")
+shift_type = st.sidebar.selectbox("Shift Type", config.shift_types, index=0)
 severity = st.sidebar.selectbox("Severity", config.severities, index=2)
-onset = st.sidebar.selectbox("Onset speed", config.onsets, index=0)
-seed = st.sidebar.number_input("Random seed", value=42, step=1)
+onset = st.sidebar.selectbox("Onset Speed", config.onsets, index=0)
+seed = st.sidebar.number_input("Random Seed", value=42, step=1)
 
 tab1, tab2 = st.tabs(["Live Monitor", "Evaluation Grid"])
 
 # ---------------------------------------------------------------------------
-# Tab 1 — live monitor for the selected scenario
+# Tab 1 — Live Monitor
 # ---------------------------------------------------------------------------
 
 with tab1:
-    df = get_data(csv_path)
-    reference_df, detector, pred_detector, perf_detector = get_reference_and_detector(csv_path)
+    df = load_dataset(config)
+    ref_batches = make_batches(df, config.n_batches, seed=0)
+    reference_df = pd.concat(ref_batches[:config.onset_batch]).reset_index(drop=True)
+    
+    detector = EmbeddingDriftDetector(config.features, config.embedding_components).fit(reference_df)
+    ref_model = train_reference_model(reference_df, config, random_state=42)
+    pred_detector = PredictedProportionDetector(ref_model, config.features).fit(reference_df)
+    perf_detector = PerformanceMonitor(ref_model, config.features, config.label_col, config.labeled_trickle_fraction, seed=42).fit(reference_df)
+
     batches = inject(shift_type, severity, onset, int(seed), df, config)
     results = run_monitor(batches, reference_df, detector, config, pred_detector=pred_detector, perf_detector=perf_detector)
 
@@ -98,36 +90,41 @@ with tab1:
     far = false_alarm_rate(results, config.onset_batch)
 
     c1, c2, c3, c4 = st.columns(4)
-    c1.metric("Detection lag", f"{lag} batches" if lag is not None else "NOT DETECTED")
-    c2.metric("False alarm rate (pre-onset)", f"{far:.1%}")
-    c3.metric("Shift onset", f"batch {config.onset_batch}")
-    c4.metric("Alerts fired", int(results["any_alert"].sum()))
+    c1.metric("Detection Lag", f"{lag} batches" if lag is not None else "NOT DETECTED")
+    c2.metric("Pre-onset False Alarm Rate", f"{far:.1%}")
+    c3.metric("Shift Onset", f"batch {config.onset_batch}")
+    c4.metric("Alerts Fired", int(results["any_alert"].sum()))
 
     fig = plot_monitor_dashboard(results, config.onset_batch, config,
-                                  title=f"{shift_type} shift — {severity}, {onset} onset")
+                                  title=f"{shift_type.capitalize()} shift ({severity}, {onset} onset) — {dataset_choice.split()[0]}")
     st.pyplot(fig)
     plt.close(fig)
 
-    with st.expander("Raw per-batch results"):
-        st.dataframe(results, width="stretch")
+    with st.expander("Raw per-batch results table"):
+        st.dataframe(results, use_container_width=True)
 
 # ---------------------------------------------------------------------------
-# Tab 2 — evaluation grid explorer
+# Tab 2 — Evaluation Grid Explorer
 # ---------------------------------------------------------------------------
 
 with tab2:
-    st.subheader("Full evaluation grid")
-    n_reps = st.slider("Repetitions per grid cell", 1, 10, 5)
-    if st.button("Run evaluation grid"):
-        with st.spinner("Running grid — a few dozen seconds..."):
-            summary = get_grid_summary(csv_path, n_reps)
-        st.session_state["summary"] = summary
+    st.subheader(f"Evaluation Grid — {dataset_choice.split()[0]}")
+    n_reps = st.slider("Repetitions per scenario cell", 1, 10, 5)
+    
+    if st.button("Run Evaluation Grid"):
+        with st.spinner("Running grid across scenarios..."):
+            config.n_reps = n_reps
+            records = run_full_grid(df, config)
+            summary = summarize_grid(records)
+            st.session_state["summary"] = summary
+            st.session_state["records"] = records
 
     if "summary" in st.session_state:
         summary = st.session_state["summary"]
+        records = st.session_state.get("records", summary)
 
-        st.markdown("**Recommended detector per shift type**")
-        st.dataframe(best_detector_per_shift_type(summary), width="stretch")
+        st.markdown("**Recommended Detector per Shift Type (Pooled Wilson 95% CIs)**")
+        st.dataframe(best_detector_per_shift_type(records), use_container_width=True)
 
         col1, col2 = st.columns(2)
         with col1:
@@ -145,7 +142,7 @@ with tab2:
         st.pyplot(fig3)
         plt.close(fig3)
 
-        st.markdown("**Failure modes** (sensitivity < 0.5 or mean lag > 5 batches)")
-        st.dataframe(find_failure_modes(summary), width="stretch")
+        st.markdown("**Failure Modes** (Sensitivity < 0.5 or Lag > 5 batches)")
+        st.dataframe(find_failure_modes(summary), use_container_width=True)
     else:
-        st.info("Click **Run evaluation grid** to populate this tab.")
+        st.info("Click **Run Evaluation Grid** to populate this tab.")

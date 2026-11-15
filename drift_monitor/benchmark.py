@@ -88,7 +88,7 @@ def run_benchmark(df: pd.DataFrame, config, n_calls: int = 50) -> pd.DataFrame:
     detectors = [
         ("psi_agg + kl_agg (shared cached bins)", psikl_mean, psikl_std, psikl_fit_ms, _obj_size_kb(psikl_monitor)),
         ("centroid_dist", emb_mean, emb_std, emb_fit_ms, _obj_size_kb(emb_detector)),
-        ("pred_prop_psi", pred_mean, pred_std, model_fit_ms + pred_fit_ms, _obj_size_kb(model) + _obj_size_kb(pred_detector)),
+        ("pred_prop_psi", pred_mean, pred_std, model_fit_ms + pred_fit_ms, _obj_size_kb(pred_detector)),
         ("concept_signal", perf_mean, perf_std, perf_fit_ms, _obj_size_kb(perf_detector)),
     ]
 
@@ -107,7 +107,7 @@ def run_benchmark(df: pd.DataFrame, config, n_calls: int = 50) -> pd.DataFrame:
         "detector": "ALL 5 COMBINED (full pipeline per batch)",
         "per_batch_ms": round(all_detector_total_ms, 4),
         "per_batch_ms_std": float("nan"),
-        "one_time_fit_ms": round(emb_fit_ms + model_fit_ms + pred_fit_ms + perf_fit_ms, 2),
+        "one_time_fit_ms": round(psikl_fit_ms + emb_fit_ms + model_fit_ms + pred_fit_ms + perf_fit_ms, 2),
         "throughput_batches_per_sec": round(1000 / all_detector_total_ms, 1) if all_detector_total_ms > 0 else float("inf"),
         "approx_memory_kb": round(sum(r["approx_memory_kb"] for r in rows), 1),
     })

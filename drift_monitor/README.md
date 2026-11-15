@@ -18,7 +18,7 @@ pip install -r requirements.txt
 ## Recommended: run via Docker instead
 
 This project hit the same reproducibility bug four separate times across
-different machines (see Phase 5 report Appendix A) — different installed
+different machines (see [REPORT.md](../REPORT.md) Section 2.2) — different installed
 library versions producing different results from identical code and data.
 A container removes that variable permanently. From the top-level folder
 (the one with `Dockerfile` and `drift_monitor/` both visible):
@@ -26,13 +26,12 @@ A container removes that variable permanently. From the top-level folder
 ```bash
 docker build -t drift-monitor .
 
-# Dashboard (dataset optional — falls back to synthetic data if not mounted):
-docker run -p 8501:8501 -v /path/to/cs-training.csv:/app/cs-training.csv drift-monitor
+# Full reproduction across all datasets:
+docker run -v $(pwd)/report_assets_combined:/app/report_assets_combined \
+           drift-monitor python reproduce_all.py
 
-# Regenerate report_assets/ instead of the dashboard:
-docker run -v /path/to/cs-training.csv:/app/cs-training.csv \
-           -v $(pwd)/report_assets:/app/report_assets \
-           drift-monitor python generate_report_assets.py
+# Live Dashboard:
+docker run -p 8501:8501 drift-monitor
 ```
 
 The dataset is mounted at runtime, not baked into the image (keeps the
@@ -172,7 +171,7 @@ error, it will just silently produce wrong numbers.
 
 ## Detectors and what they actually catch
 
-Evaluated on the real Give Me Some Credit dataset (see the Phase 5 report
+Evaluated on the real Give Me Some Credit dataset (see [REPORT.md](../REPORT.md) Section 4
 for full numbers):
 
 | Shift Type | Best Detector | Mean Sensitivity |
@@ -214,8 +213,8 @@ Validated across the full evaluation grid: this precedence rule resolves
 misdiagnosed as concept drift, vs. 20-40% if you read `concept_signal`
 alone). The one ambiguity it does NOT resolve — mild label shift looking
 identical to concept drift — is a real, currently-unsolved limit of the
-detector suite, not a bug in the diagnosis logic; see the Phase 5 report,
-Section 3.4, for why.
+detector suite, not a bug in the diagnosis logic; see [REPORT.md](../REPORT.md),
+Section 2.4, for why.
 
 ## Running the dashboard
 
@@ -226,7 +225,7 @@ streamlit run drift_monitor/dashboard_app.py
 Lets you pick a shift type / severity / onset from the sidebar and watch the
 monitor's response live, plus an evaluation-grid explorer tab.
 
-## Known limitations (see the Phase 5 report for the full write-up)
+## Known limitations (see [REPORT.md](../REPORT.md) Section 8 for the full write-up)
 
 - All three detectors here operate on **X** (raw features or their PCA
   embedding). They're strong on covariate shift, weak-to-blind on label

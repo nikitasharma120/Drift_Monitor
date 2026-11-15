@@ -33,6 +33,6 @@ print('All pinned versions verified.')"
 
 EXPOSE 8501
 
-# Default: launch the dashboard. Override with `docker run ... python generate_report_assets.py`
-# to regenerate report_assets/ instead.
+# Default: launch the dashboard. Override with `docker run drift-monitor python reproduce_all.py`
+# to regenerate all combined report assets and trade-off curves.
 CMD ["streamlit", "run", "drift_monitor/dashboard_app.py", "--server.address=0.0.0.0", "--server.port=8501"]

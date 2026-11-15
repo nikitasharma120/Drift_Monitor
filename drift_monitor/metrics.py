@@ -6,8 +6,15 @@ from sklearn.preprocessing import StandardScaler
 
 
 def psi(reference: np.ndarray, current: np.ndarray, n_bins: int = 10) -> float:
+    """Computes Population Stability Index (Jeffreys Divergence).
+    Deduplicates quantile bin edges to prevent zero-width bin collapse on
+    zero-inflated or discrete features."""
     edges = np.quantile(reference, np.linspace(0, 1, n_bins + 1))
-    edges[0], edges[-1] = -np.inf, np.inf
+    edges = np.unique(edges)
+    if len(edges) < 2:
+        edges = np.array([-np.inf, np.inf])
+    else:
+        edges[0], edges[-1] = -np.inf, np.inf
     ref_counts, _ = np.histogram(reference, bins=edges)
     cur_counts, _ = np.histogram(current, bins=edges)
     ref_pct = np.clip(ref_counts / max(len(reference), 1), 1e-6, None)
@@ -16,9 +23,14 @@ def psi(reference: np.ndarray, current: np.ndarray, n_bins: int = 10) -> float:
 
 
 def kl_divergence(reference: np.ndarray, current: np.ndarray, n_bins: int = 10) -> float:
-    """KL(current || reference)."""
+    """KL(current || reference).
+    Deduplicates quantile bin edges to prevent zero-width bin collapse."""
     edges = np.quantile(reference, np.linspace(0, 1, n_bins + 1))
-    edges[0], edges[-1] = -np.inf, np.inf
+    edges = np.unique(edges)
+    if len(edges) < 2:
+        edges = np.array([-np.inf, np.inf])
+    else:
+        edges[0], edges[-1] = -np.inf, np.inf
     ref_counts, _ = np.histogram(reference, bins=edges)
     cur_counts, _ = np.histogram(current, bins=edges)
     ref_p = np.clip(ref_counts / max(len(reference), 1), 1e-6, None)
@@ -35,15 +47,9 @@ def multi_feature_kl(reference_df, current_df, features, n_bins=10) -> dict:
 
 
 class PSIKLMonitor:
-    """Cached PSI/KL: precomputes bin edges and the reference window's own
-    histogram percentages ONCE at fit time, reusing them for every future
-    batch. multi_feature_psi()/multi_feature_kl() above recompute both
-    from scratch on every call, even though the reference data never
-    changes -- np.quantile() is a sort, so this is wasted work repeated
-    every batch. Benchmarked: this cached version cuts per-batch PSI+KL
-    cost from ~23ms to ~2ms combined on the 10-feature Give Me Some Credit
-    setup (see benchmark.py), with numerically identical results -- this
-    is a pure performance fix, not a behavior change."""
+    """Cached PSI/KL: precomputes bin edges and reference window histogram
+    percentages once at fit time, reusing them across batches. Handles duplicate
+    quantile edges safely."""
 
     def __init__(self, features, n_bins=10):
         self.features = features
@@ -55,7 +61,11 @@ class PSIKLMonitor:
         for f in self.features:
             ref = reference_df[f].values
             edges = np.quantile(ref, np.linspace(0, 1, self.n_bins + 1))
-            edges[0], edges[-1] = -np.inf, np.inf
+            edges = np.unique(edges)
+            if len(edges) < 2:
+                edges = np.array([-np.inf, np.inf])
+            else:
+                edges[0], edges[-1] = -np.inf, np.inf
             ref_counts, _ = np.histogram(ref, bins=edges)
             self._edges[f] = edges
             self._ref_pct[f] = np.clip(ref_counts / max(len(ref), 1), 1e-6, None)
@@ -80,23 +90,30 @@ def aggregate(metric_dict: dict, how: str = "max") -> float:
 
 class EmbeddingDriftDetector:
     """PCA embedding fit on the reference window; tracks centroid distance
-    and PSI-on-leading-component drift for incoming batches."""
+    and PSI-on-leading-component drift. Uses Winsorization before scaling
+    to prevent extreme outliers (e.g. DebtRatio > 100,000) from corrupting PC1."""
 
     def __init__(self, features, n_components=3):
         self.features = features
+        self.n_components = n_components
+        self.winsorizer = None
         self.scaler = StandardScaler()
         self.pca = PCA(n_components=n_components, random_state=42)
         self.ref_embedding = None
         self.ref_centroid = None
 
     def fit(self, reference_df):
-        X = self.scaler.fit_transform(reference_df[self.features])
+        from .reference_model import Winsorizer
+        self.winsorizer = Winsorizer(0.01, 0.99)
+        clipped_ref = self.winsorizer.fit_transform(reference_df[self.features])
+        X = self.scaler.fit_transform(clipped_ref)
         self.ref_embedding = self.pca.fit_transform(X)
         self.ref_centroid = self.ref_embedding.mean(axis=0)
         return self
 
     def transform(self, batch_df):
-        X = self.scaler.transform(batch_df[self.features])
+        clipped = self.winsorizer.transform(batch_df[self.features])
+        X = self.scaler.transform(clipped)
         return self.pca.transform(X)
 
     def drift_score(self, batch_df) -> dict:
