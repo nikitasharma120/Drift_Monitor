@@ -1,0 +1,271 @@
+shift_type,severity,onset,metric,sensitivity,sensitivity_ci_low,sensitivity_ci_high,n_reps,mean_lag_when_detected,mean_false_alarm_rate,dataset
+concept,mild,abrupt,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+concept,mild,abrupt,concept_signal,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+concept,mild,abrupt,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+concept,mild,abrupt,pred_prop_psi,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+concept,mild,abrupt,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+concept,mild,gradual,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+concept,mild,gradual,concept_signal,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+concept,mild,gradual,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+concept,mild,gradual,pred_prop_psi,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+concept,mild,gradual,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+concept,moderate,abrupt,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+concept,moderate,abrupt,concept_signal,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+concept,moderate,abrupt,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+concept,moderate,abrupt,pred_prop_psi,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+concept,moderate,abrupt,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+concept,moderate,gradual,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+concept,moderate,gradual,concept_signal,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+concept,moderate,gradual,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+concept,moderate,gradual,pred_prop_psi,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+concept,moderate,gradual,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+concept,severe,abrupt,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+concept,severe,abrupt,concept_signal,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+concept,severe,abrupt,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+concept,severe,abrupt,pred_prop_psi,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+concept,severe,abrupt,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+concept,severe,gradual,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+concept,severe,gradual,concept_signal,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+concept,severe,gradual,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+concept,severe,gradual,pred_prop_psi,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+concept,severe,gradual,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+covariate,mild,abrupt,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+covariate,mild,abrupt,concept_signal,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+covariate,mild,abrupt,kl_agg,1.0,0.8388698745050667,1.0,20.0,1.0,0.0,Give Me Some Credit
+covariate,mild,abrupt,pred_prop_psi,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+covariate,mild,abrupt,psi_agg,1.0,0.8388698745050667,1.0,20.0,1.0,0.0,Give Me Some Credit
+covariate,mild,gradual,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+covariate,mild,gradual,concept_signal,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+covariate,mild,gradual,kl_agg,1.0,0.8388698745050667,1.0,20.0,2.0,0.0,Give Me Some Credit
+covariate,mild,gradual,pred_prop_psi,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+covariate,mild,gradual,psi_agg,1.0,0.8388698745050667,1.0,20.0,1.0,0.0,Give Me Some Credit
+covariate,moderate,abrupt,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+covariate,moderate,abrupt,concept_signal,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+covariate,moderate,abrupt,kl_agg,1.0,0.8388698745050667,1.0,20.0,1.0,0.0,Give Me Some Credit
+covariate,moderate,abrupt,pred_prop_psi,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+covariate,moderate,abrupt,psi_agg,1.0,0.8388698745050667,1.0,20.0,1.0,0.0,Give Me Some Credit
+covariate,moderate,gradual,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+covariate,moderate,gradual,concept_signal,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+covariate,moderate,gradual,kl_agg,1.0,0.8388698745050667,1.0,20.0,1.0,0.0,Give Me Some Credit
+covariate,moderate,gradual,pred_prop_psi,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+covariate,moderate,gradual,psi_agg,1.0,0.8388698745050667,1.0,20.0,1.0,0.0,Give Me Some Credit
+covariate,severe,abrupt,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+covariate,severe,abrupt,concept_signal,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+covariate,severe,abrupt,kl_agg,1.0,0.8388698745050667,1.0,20.0,1.0,0.0,Give Me Some Credit
+covariate,severe,abrupt,pred_prop_psi,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+covariate,severe,abrupt,psi_agg,1.0,0.8388698745050667,1.0,20.0,1.0,0.0,Give Me Some Credit
+covariate,severe,gradual,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+covariate,severe,gradual,concept_signal,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+covariate,severe,gradual,kl_agg,1.0,0.8388698745050667,1.0,20.0,1.0,0.0,Give Me Some Credit
+covariate,severe,gradual,pred_prop_psi,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+covariate,severe,gradual,psi_agg,1.0,0.8388698745050667,1.0,20.0,1.0,0.0,Give Me Some Credit
+label,mild,abrupt,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+label,mild,abrupt,concept_signal,1.0,0.8388698745050667,1.0,20.0,2.3,0.0,Give Me Some Credit
+label,mild,abrupt,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+label,mild,abrupt,pred_prop_psi,0.3,0.14547527396899385,0.5189767762289793,20.0,8.666666666666666,0.0,Give Me Some Credit
+label,mild,abrupt,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+label,mild,gradual,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+label,mild,gradual,concept_signal,1.0,0.8388698745050667,1.0,20.0,6.9,0.0,Give Me Some Credit
+label,mild,gradual,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+label,mild,gradual,pred_prop_psi,0.35,0.18118954786794464,0.5671494897805354,20.0,10.285714285714286,0.0,Give Me Some Credit
+label,mild,gradual,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+label,moderate,abrupt,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+label,moderate,abrupt,concept_signal,1.0,0.8388698745050667,1.0,20.0,1.0,0.0,Give Me Some Credit
+label,moderate,abrupt,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+label,moderate,abrupt,pred_prop_psi,1.0,0.8388698745050667,1.0,20.0,1.0,0.0,Give Me Some Credit
+label,moderate,abrupt,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+label,moderate,gradual,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+label,moderate,gradual,concept_signal,1.0,0.8388698745050667,1.0,20.0,3.35,0.0,Give Me Some Credit
+label,moderate,gradual,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+label,moderate,gradual,pred_prop_psi,1.0,0.8388698745050667,1.0,20.0,4.5,0.0,Give Me Some Credit
+label,moderate,gradual,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+label,severe,abrupt,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+label,severe,abrupt,concept_signal,1.0,0.8388698745050667,1.0,20.0,1.0,0.0,Give Me Some Credit
+label,severe,abrupt,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+label,severe,abrupt,pred_prop_psi,1.0,0.8388698745050667,1.0,20.0,1.0,0.0,Give Me Some Credit
+label,severe,abrupt,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+label,severe,gradual,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+label,severe,gradual,concept_signal,1.0,0.8388698745050667,1.0,20.0,1.9,0.0,Give Me Some Credit
+label,severe,gradual,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+label,severe,gradual,pred_prop_psi,1.0,0.8388698745050667,1.0,20.0,2.7,0.0,Give Me Some Credit
+label,severe,gradual,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Give Me Some Credit
+concept,mild,abrupt,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Taiwan Credit Default
+concept,mild,abrupt,concept_signal,0.1,0.027865893984153234,0.30103820641179335,20.0,9.5,0.0,Taiwan Credit Default
+concept,mild,abrupt,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Taiwan Credit Default
+concept,mild,abrupt,pred_prop_psi,0.95,0.7638641064874331,0.9911187805671268,20.0,2.8421052631578947,0.345,Taiwan Credit Default
+concept,mild,abrupt,psi_agg,0.15,0.05236779195949584,0.36042329588695743,20.0,4.666666666666667,0.0,Taiwan Credit Default
+concept,mild,gradual,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Taiwan Credit Default
+concept,mild,gradual,concept_signal,0.05,0.008881219432873136,0.23613589351256675,20.0,3.0,0.0,Taiwan Credit Default
+concept,mild,gradual,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Taiwan Credit Default
+concept,mild,gradual,pred_prop_psi,1.0,0.8388698745050667,1.0,20.0,2.95,0.325,Taiwan Credit Default
+concept,mild,gradual,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Taiwan Credit Default
+concept,moderate,abrupt,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Taiwan Credit Default
+concept,moderate,abrupt,concept_signal,0.25,0.11186005278940311,0.4687050099580635,20.0,6.8,0.0,Taiwan Credit Default
+concept,moderate,abrupt,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Taiwan Credit Default
+concept,moderate,abrupt,pred_prop_psi,1.0,0.8388698745050667,1.0,20.0,3.05,0.315,Taiwan Credit Default
+concept,moderate,abrupt,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.005,Taiwan Credit Default
+concept,moderate,gradual,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Taiwan Credit Default
+concept,moderate,gradual,concept_signal,0.05,0.008881219432873136,0.23613589351256675,20.0,14.0,0.005,Taiwan Credit Default
+concept,moderate,gradual,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Taiwan Credit Default
+concept,moderate,gradual,pred_prop_psi,1.0,0.8388698745050667,1.0,20.0,2.55,0.265,Taiwan Credit Default
+concept,moderate,gradual,psi_agg,0.05,0.008881219432873136,0.23613589351256675,20.0,1.0,0.0,Taiwan Credit Default
+concept,severe,abrupt,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Taiwan Credit Default
+concept,severe,abrupt,concept_signal,0.15,0.05236779195949584,0.36042329588695743,20.0,4.666666666666667,0.01,Taiwan Credit Default
+concept,severe,abrupt,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Taiwan Credit Default
+concept,severe,abrupt,pred_prop_psi,0.95,0.7638641064874331,0.9911187805671268,20.0,3.8421052631578947,0.34,Taiwan Credit Default
+concept,severe,abrupt,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Taiwan Credit Default
+concept,severe,gradual,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Taiwan Credit Default
+concept,severe,gradual,concept_signal,0.2,0.08065635327120002,0.4160217220257599,20.0,8.25,0.0,Taiwan Credit Default
+concept,severe,gradual,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Taiwan Credit Default
+concept,severe,gradual,pred_prop_psi,1.0,0.8388698745050667,1.0,20.0,3.0,0.28500000000000003,Taiwan Credit Default
+concept,severe,gradual,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Taiwan Credit Default
+covariate,mild,abrupt,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Taiwan Credit Default
+covariate,mild,abrupt,concept_signal,0.0,0.0,0.16113012549493322,20.0,,0.0,Taiwan Credit Default
+covariate,mild,abrupt,kl_agg,1.0,0.8388698745050667,1.0,20.0,1.0,0.0,Taiwan Credit Default
+covariate,mild,abrupt,pred_prop_psi,1.0,0.8388698745050667,1.0,20.0,1.0,0.32,Taiwan Credit Default
+covariate,mild,abrupt,psi_agg,1.0,0.8388698745050667,1.0,20.0,1.0,0.0,Taiwan Credit Default
+covariate,mild,gradual,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Taiwan Credit Default
+covariate,mild,gradual,concept_signal,0.05,0.008881219432873136,0.23613589351256675,20.0,13.0,0.01,Taiwan Credit Default
+covariate,mild,gradual,kl_agg,1.0,0.8388698745050667,1.0,20.0,1.0,0.0,Taiwan Credit Default
+covariate,mild,gradual,pred_prop_psi,1.0,0.8388698745050667,1.0,20.0,1.45,0.34,Taiwan Credit Default
+covariate,mild,gradual,psi_agg,1.0,0.8388698745050667,1.0,20.0,1.0,0.0,Taiwan Credit Default
+covariate,moderate,abrupt,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Taiwan Credit Default
+covariate,moderate,abrupt,concept_signal,0.05,0.008881219432873136,0.23613589351256675,20.0,4.0,0.0,Taiwan Credit Default
+covariate,moderate,abrupt,kl_agg,1.0,0.8388698745050667,1.0,20.0,1.0,0.0,Taiwan Credit Default
+covariate,moderate,abrupt,pred_prop_psi,1.0,0.8388698745050667,1.0,20.0,1.0,0.26000000000000006,Taiwan Credit Default
+covariate,moderate,abrupt,psi_agg,1.0,0.8388698745050667,1.0,20.0,1.0,0.0,Taiwan Credit Default
+covariate,moderate,gradual,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Taiwan Credit Default
+covariate,moderate,gradual,concept_signal,0.0,0.0,0.16113012549493322,20.0,,0.0,Taiwan Credit Default
+covariate,moderate,gradual,kl_agg,1.0,0.8388698745050667,1.0,20.0,1.0,0.0,Taiwan Credit Default
+covariate,moderate,gradual,pred_prop_psi,1.0,0.8388698745050667,1.0,20.0,1.1,0.345,Taiwan Credit Default
+covariate,moderate,gradual,psi_agg,1.0,0.8388698745050667,1.0,20.0,1.0,0.0,Taiwan Credit Default
+covariate,severe,abrupt,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Taiwan Credit Default
+covariate,severe,abrupt,concept_signal,0.05,0.008881219432873136,0.23613589351256675,20.0,1.0,0.005,Taiwan Credit Default
+covariate,severe,abrupt,kl_agg,1.0,0.8388698745050667,1.0,20.0,1.0,0.0,Taiwan Credit Default
+covariate,severe,abrupt,pred_prop_psi,1.0,0.8388698745050667,1.0,20.0,1.0,0.34500000000000003,Taiwan Credit Default
+covariate,severe,abrupt,psi_agg,1.0,0.8388698745050667,1.0,20.0,1.0,0.0,Taiwan Credit Default
+covariate,severe,gradual,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Taiwan Credit Default
+covariate,severe,gradual,concept_signal,0.05,0.008881219432873136,0.23613589351256675,20.0,4.0,0.005,Taiwan Credit Default
+covariate,severe,gradual,kl_agg,1.0,0.8388698745050667,1.0,20.0,1.0,0.0,Taiwan Credit Default
+covariate,severe,gradual,pred_prop_psi,1.0,0.8388698745050667,1.0,20.0,1.0,0.29500000000000004,Taiwan Credit Default
+covariate,severe,gradual,psi_agg,1.0,0.8388698745050667,1.0,20.0,1.0,0.0,Taiwan Credit Default
+label,mild,abrupt,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Taiwan Credit Default
+label,mild,abrupt,concept_signal,0.55,0.3420820083075997,0.7418049791429071,20.0,7.909090909090909,0.0,Taiwan Credit Default
+label,mild,abrupt,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Taiwan Credit Default
+label,mild,abrupt,pred_prop_psi,1.0,0.8388698745050667,1.0,20.0,1.35,0.355,Taiwan Credit Default
+label,mild,abrupt,psi_agg,0.25,0.11186005278940311,0.4687050099580635,20.0,9.6,0.0,Taiwan Credit Default
+label,mild,gradual,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Taiwan Credit Default
+label,mild,gradual,concept_signal,0.55,0.3420820083075997,0.7418049791429071,20.0,8.727272727272727,0.0,Taiwan Credit Default
+label,mild,gradual,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Taiwan Credit Default
+label,mild,gradual,pred_prop_psi,1.0,0.8388698745050667,1.0,20.0,2.05,0.385,Taiwan Credit Default
+label,mild,gradual,psi_agg,0.25,0.11186005278940311,0.4687050099580635,20.0,8.6,0.0,Taiwan Credit Default
+label,moderate,abrupt,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Taiwan Credit Default
+label,moderate,abrupt,concept_signal,1.0,0.8388698745050667,1.0,20.0,1.95,0.0,Taiwan Credit Default
+label,moderate,abrupt,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Taiwan Credit Default
+label,moderate,abrupt,pred_prop_psi,1.0,0.8388698745050667,1.0,20.0,1.15,0.275,Taiwan Credit Default
+label,moderate,abrupt,psi_agg,0.2,0.08065635327120002,0.4160217220257599,20.0,5.75,0.0,Taiwan Credit Default
+label,moderate,gradual,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Taiwan Credit Default
+label,moderate,gradual,concept_signal,1.0,0.8388698745050667,1.0,20.0,5.55,0.0,Taiwan Credit Default
+label,moderate,gradual,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Taiwan Credit Default
+label,moderate,gradual,pred_prop_psi,1.0,0.8388698745050667,1.0,20.0,1.5,0.26000000000000006,Taiwan Credit Default
+label,moderate,gradual,psi_agg,0.2,0.08065635327120002,0.4160217220257599,20.0,7.75,0.0,Taiwan Credit Default
+label,severe,abrupt,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Taiwan Credit Default
+label,severe,abrupt,concept_signal,1.0,0.8388698745050667,1.0,20.0,1.0,0.0,Taiwan Credit Default
+label,severe,abrupt,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Taiwan Credit Default
+label,severe,abrupt,pred_prop_psi,1.0,0.8388698745050667,1.0,20.0,1.0,0.28500000000000003,Taiwan Credit Default
+label,severe,abrupt,psi_agg,0.2,0.08065635327120002,0.4160217220257599,20.0,6.0,0.0,Taiwan Credit Default
+label,severe,gradual,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Taiwan Credit Default
+label,severe,gradual,concept_signal,1.0,0.8388698745050667,1.0,20.0,3.0,0.005,Taiwan Credit Default
+label,severe,gradual,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Taiwan Credit Default
+label,severe,gradual,pred_prop_psi,1.0,0.8388698745050667,1.0,20.0,1.1,0.305,Taiwan Credit Default
+label,severe,gradual,psi_agg,0.45,0.25819502085709295,0.6579179916924003,20.0,9.88888888888889,0.0,Taiwan Credit Default
+concept,mild,abrupt,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+concept,mild,abrupt,concept_signal,1.0,0.8388698745050667,1.0,20.0,1.4,0.005,Adult Census Income
+concept,mild,abrupt,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+concept,mild,abrupt,pred_prop_psi,0.2,0.08065635327120002,0.4160217220257599,20.0,6.25,0.0,Adult Census Income
+concept,mild,abrupt,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+concept,mild,gradual,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+concept,mild,gradual,concept_signal,1.0,0.8388698745050667,1.0,20.0,2.1,0.015000000000000003,Adult Census Income
+concept,mild,gradual,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+concept,mild,gradual,pred_prop_psi,0.1,0.027865893984153234,0.30103820641179335,20.0,14.0,0.005,Adult Census Income
+concept,mild,gradual,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+concept,moderate,abrupt,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+concept,moderate,abrupt,concept_signal,1.0,0.8388698745050667,1.0,20.0,1.3,0.0,Adult Census Income
+concept,moderate,abrupt,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+concept,moderate,abrupt,pred_prop_psi,0.05,0.008881219432873136,0.23613589351256675,20.0,11.0,0.01,Adult Census Income
+concept,moderate,abrupt,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+concept,moderate,gradual,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+concept,moderate,gradual,concept_signal,1.0,0.8388698745050667,1.0,20.0,1.55,0.0,Adult Census Income
+concept,moderate,gradual,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+concept,moderate,gradual,pred_prop_psi,0.1,0.027865893984153234,0.30103820641179335,20.0,5.5,0.005,Adult Census Income
+concept,moderate,gradual,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+concept,severe,abrupt,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+concept,severe,abrupt,concept_signal,1.0,0.8388698745050667,1.0,20.0,1.35,0.0,Adult Census Income
+concept,severe,abrupt,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+concept,severe,abrupt,pred_prop_psi,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+concept,severe,abrupt,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+concept,severe,gradual,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+concept,severe,gradual,concept_signal,1.0,0.8388698745050667,1.0,20.0,1.4,0.0,Adult Census Income
+concept,severe,gradual,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+concept,severe,gradual,pred_prop_psi,0.05,0.008881219432873136,0.23613589351256675,20.0,4.0,0.0,Adult Census Income
+concept,severe,gradual,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+covariate,mild,abrupt,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+covariate,mild,abrupt,concept_signal,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+covariate,mild,abrupt,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+covariate,mild,abrupt,pred_prop_psi,0.55,0.3420820083075997,0.7418049791429071,20.0,8.272727272727273,0.0,Adult Census Income
+covariate,mild,abrupt,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+covariate,mild,gradual,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+covariate,mild,gradual,concept_signal,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+covariate,mild,gradual,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+covariate,mild,gradual,pred_prop_psi,0.45,0.25819502085709295,0.6579179916924003,20.0,8.777777777777779,0.0,Adult Census Income
+covariate,mild,gradual,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+covariate,moderate,abrupt,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+covariate,moderate,abrupt,concept_signal,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+covariate,moderate,abrupt,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+covariate,moderate,abrupt,pred_prop_psi,1.0,0.8388698745050667,1.0,20.0,1.45,0.0,Adult Census Income
+covariate,moderate,abrupt,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+covariate,moderate,gradual,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+covariate,moderate,gradual,concept_signal,0.0,0.0,0.16113012549493322,20.0,,0.005,Adult Census Income
+covariate,moderate,gradual,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+covariate,moderate,gradual,pred_prop_psi,1.0,0.8388698745050667,1.0,20.0,5.85,0.0,Adult Census Income
+covariate,moderate,gradual,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+covariate,severe,abrupt,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+covariate,severe,abrupt,concept_signal,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+covariate,severe,abrupt,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+covariate,severe,abrupt,pred_prop_psi,1.0,0.8388698745050667,1.0,20.0,1.0,0.0,Adult Census Income
+covariate,severe,abrupt,psi_agg,1.0,0.8388698745050667,1.0,20.0,1.0,0.0,Adult Census Income
+covariate,severe,gradual,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+covariate,severe,gradual,concept_signal,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+covariate,severe,gradual,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+covariate,severe,gradual,pred_prop_psi,1.0,0.8388698745050667,1.0,20.0,2.9,0.0,Adult Census Income
+covariate,severe,gradual,psi_agg,1.0,0.8388698745050667,1.0,20.0,5.4,0.0,Adult Census Income
+label,mild,abrupt,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+label,mild,abrupt,concept_signal,0.5,0.2992949144298199,0.7007050855701801,20.0,5.0,0.0,Adult Census Income
+label,mild,abrupt,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+label,mild,abrupt,pred_prop_psi,1.0,0.8388698745050667,1.0,20.0,2.1,0.005,Adult Census Income
+label,mild,abrupt,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+label,mild,gradual,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+label,mild,gradual,concept_signal,0.5,0.2992949144298199,0.7007050855701801,20.0,9.2,0.0,Adult Census Income
+label,mild,gradual,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+label,mild,gradual,pred_prop_psi,1.0,0.8388698745050667,1.0,20.0,4.0,0.005,Adult Census Income
+label,mild,gradual,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+label,moderate,abrupt,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+label,moderate,abrupt,concept_signal,1.0,0.8388698745050667,1.0,20.0,2.65,0.0,Adult Census Income
+label,moderate,abrupt,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+label,moderate,abrupt,pred_prop_psi,1.0,0.8388698745050667,1.0,20.0,1.25,0.005,Adult Census Income
+label,moderate,abrupt,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+label,moderate,gradual,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+label,moderate,gradual,concept_signal,1.0,0.8388698745050667,1.0,20.0,6.65,0.0,Adult Census Income
+label,moderate,gradual,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+label,moderate,gradual,pred_prop_psi,1.0,0.8388698745050667,1.0,20.0,2.6,0.0,Adult Census Income
+label,moderate,gradual,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+label,severe,abrupt,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+label,severe,abrupt,concept_signal,1.0,0.8388698745050667,1.0,20.0,1.1,0.005,Adult Census Income
+label,severe,abrupt,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+label,severe,abrupt,pred_prop_psi,1.0,0.8388698745050667,1.0,20.0,1.0,0.0,Adult Census Income
+label,severe,abrupt,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+label,severe,gradual,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+label,severe,gradual,concept_signal,1.0,0.8388698745050667,1.0,20.0,3.1,0.01,Adult Census Income
+label,severe,gradual,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income
+label,severe,gradual,pred_prop_psi,1.0,0.8388698745050667,1.0,20.0,1.85,0.0,Adult Census Income
+label,severe,gradual,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income

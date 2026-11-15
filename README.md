@@ -81,8 +81,8 @@ pip install --upgrade pip
 pip install -r drift_monitor/requirements.txt
 ```
 
-### Step 3: Run the Automated Unit Test Suite (21 Tests)
-Verify that all statistical calculations, Winsorizers, deduplicated quantile bins, and debouncers pass:
+### Step 3: Run the Automated Unit Test Suite (23 Tests)
+Verify that all statistical calculations, Winsorizers, deduplicated quantile bins, debouncers, KS baseline tests, and hand-labelled benchmarks pass:
 ```bash
 python -m pytest tests/test_core.py -v
 ```
@@ -228,9 +228,9 @@ the plan from the start.
 
 | Shift type | Give Me Some Credit | Taiwan Credit Default | Adult Income |
 |---|---|---|---|
-| Covariate shift | `kl_agg`, 1.00 [0.82, 1.00] | `kl_agg`, 1.00 [0.82, 1.00] | `pred_prop_psi`, 0.83 [0.61, 0.94] |
-| Label shift | `concept_signal`, 1.00 [0.82, 1.00] | `pred_prop_psi`, 1.00 [0.82, 1.00] | `pred_prop_psi`, 1.00 [0.82, 1.00] |
-| Concept drift | `concept_signal`, 0.89 [0.67, 0.97] | `pred_prop_psi`, 1.00 [0.82, 1.00] | `concept_signal`, 1.00 [0.82, 1.00] |
+| Covariate shift | `kl_agg`, 1.00 [0.97, 1.00] | `kl_agg`, 1.00 [0.97, 1.00] | `pred_prop_psi`, 0.83 [0.76, 0.89] |
+| Label shift | `concept_signal`, 1.00 [0.97, 1.00] | `pred_prop_psi`, 1.00 [0.97, 1.00] | `pred_prop_psi`, 1.00 [0.97, 1.00] |
+| Concept drift | `concept_signal`, 0.89 [0.67, 0.97] *(pure: 0.00, see §9)* | `pred_prop_psi`, 0.98 [0.94, 1.00] | `concept_signal`, 1.00 [0.97, 1.00] |
 
 Every cell reports the recommended detector for that (dataset, shift type)
 pair, its mean sensitivity across evaluated scenarios, and its 95%

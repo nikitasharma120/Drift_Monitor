@@ -1,6 +1,6 @@
-detector,per_batch_ms,per_batch_ms_std,one_time_fit_ms,throughput_batches_per_sec,approx_memory_kb
-psi_agg + kl_agg (shared cached bins),3.7708,1.0278,23.7,265.2,4.7
-centroid_dist,7.7178,0.6238,23.03,129.6,237.2
-pred_prop_psi,23.2445,9.2314,123.72,43.0,86.5
-concept_signal,42.8562,9.6385,35.97,23.3,4.8
-ALL 5 COMBINED (full pipeline per batch),77.5893,,182.72,12.9,333.2
+detector,per_batch_ms,per_batch_ms_std,one_time_fit_ms,throughput_batches_per_sec,approx_memory_kb,dataset
+psi_agg + kl_agg (shared cached bins),2.3574,1.0247,12.95,424.2,4.0,Taiwan Credit Default
+centroid_dist,12.1498,2.5358,36.67,82.3,239.2,Taiwan Credit Default
+pred_prop_psi,11.0145,1.6874,86.48,90.8,82.5,Taiwan Credit Default
+concept_signal,22.4073,4.7913,21.32,44.6,4.8,Taiwan Credit Default
+ALL 5 COMBINED (full pipeline per batch),47.929,,157.42,20.9,330.5,Taiwan Credit Default

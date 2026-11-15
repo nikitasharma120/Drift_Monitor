@@ -1,10 +1,10 @@
 shift_type,recommended_detector,mean_sensitivity,sensitivity_ci_low,sensitivity_ci_high,dataset
-concept,concept_signal,0.8888888888888888,0.6719975513339578,0.9689811315464172,Give Me Some Credit
-covariate,kl_agg,1.0,0.8241154494176252,1.0,Give Me Some Credit
-label,concept_signal,1.0,0.8241154494176252,1.0,Give Me Some Credit
-concept,pred_prop_psi,1.0,0.8241154494176252,1.0,Taiwan Credit Default
-covariate,kl_agg,1.0,0.8241154494176252,1.0,Taiwan Credit Default
-label,pred_prop_psi,1.0,0.8241154494176252,1.0,Taiwan Credit Default
-concept,concept_signal,1.0,0.8241154494176252,1.0,Adult Census Income
-covariate,pred_prop_psi,0.8333333333333334,0.6077750036164076,0.9416352959953425,Adult Census Income
-label,pred_prop_psi,1.0,0.8241154494176252,1.0,Adult Census Income
+concept,centroid_dist,0.0,0.0,0.031020271055929513,Give Me Some Credit
+covariate,kl_agg,1.0,0.9689797289440706,1.0,Give Me Some Credit
+label,concept_signal,1.0,0.9689797289440706,1.0,Give Me Some Credit
+concept,pred_prop_psi,0.9833333333333333,0.9412628731870861,0.9954175314588486,Taiwan Credit Default
+covariate,kl_agg,1.0,0.9689797289440706,1.0,Taiwan Credit Default
+label,pred_prop_psi,1.0,0.9689797289440706,1.0,Taiwan Credit Default
+concept,concept_signal,1.0,0.9689797289440706,1.0,Adult Census Income
+covariate,pred_prop_psi,0.8333333333333334,0.756545606089762,0.8894408798729518,Adult Census Income
+label,pred_prop_psi,1.0,0.9689797289440706,1.0,Adult Census Income

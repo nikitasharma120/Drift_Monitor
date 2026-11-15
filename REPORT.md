@@ -12,9 +12,9 @@
 Machine learning models deployed in production degrade silently. Unlike traditional software services, which fail loudly through unhandled exceptions, HTTP 500 errors, or crashes, an ML service subject to distribution shift continues serving syntactically valid, confident predictions while its statistical relationship with reality disintegrates. Standard infrastructure dashboards (CPU utilization, query latency, uptime) are structurally blind to this degradation.
 
 This report documents the design, mathematical foundations, empirical evaluation, and production failure boundaries of a lightweight, statistically-grounded monitoring system designed to run on streaming batches of input data. The architecture evaluates five complementary detectors across three canonical failure modes (**covariate shift**, **label shift**, and **concept drift**) at three controlled severity levels and two onset velocities across three real-world datasets:
-1. **Give Me Some Credit** ($N = 150,000$, 10 features, 6.7% default rate)
-2. **Taiwan Credit Default** ($N = 30,000$, 23 features, 22.1% default rate)
-3. **Adult Census Income** ($N = 32,561$, 6 continuous features, 24.1% positive rate)
+1. **Give Me Some Credit** ($N = 150,000$ raw / 120,269 complete rows, 10 features, 6.9% default rate)
+2. **Taiwan Credit Default** ($N = 30,000$ rows, 23 features, 22.1% default rate)
+3. **Adult Census Income** ($N = 48,842$ rows, 6 continuous features, 23.9% positive rate)
 
 Across 1,080 controlled test runs and 5,400 metric-level evaluations, our findings demonstrate:
 - **No single detector covers all three failure modes.** A monitoring suite must combine feature-level divergence, model-output divergence, and performance verification.
@@ -174,13 +174,13 @@ In earlier implementations, an isolated pre-onset false alarm at batch 9 primed 
 
 ### 4.1 Master Summary Table (Best Detector per Shift Type)
 
-Evaluated across 20 repetitions per scenario (mean sensitivity with 95% Wilson score confidence interval, and pre-onset false alarm rate):
+Evaluated across 20 repetitions per scenario (mean sensitivity with 95% Wilson score confidence interval, and pre-onset false alarm rate matching `recommendations_all.csv`):
 
 | Shift Type | Give Me Some Credit | Taiwan Credit Default | Adult Census Income |
 |---|---|---|---|
-| **Covariate Shift** | `psi_agg`<br>Sensitivity: **1.00** $[0.84, 1.00]$<br>FAR: $0.0\%$ | `psi_agg`<br>Sensitivity: **1.00** $[0.84, 1.00]$<br>FAR: $0.0\%$ | `pred_prop_psi`<br>Sensitivity: **0.70** $[0.57, 0.77]$<br>FAR: $0.0\%$ |
-| **Label Shift** | `pred_prop_psi`<br>Sensitivity: **1.00** $[0.84, 1.00]$<br>FAR: $0.0\%$ | `pred_prop_psi`<br>Sensitivity: **1.00** $[0.84, 1.00]$<br>FAR: $0.0\%$ | `pred_prop_psi`<br>Sensitivity: **0.97** $[0.79, 0.99]$<br>FAR: $0.0\%$ |
-| **Concept Drift** | `concept_signal`<br>Sensitivity: **0.97** $[0.79, 0.99]$<br>FAR: $0.0\%$ | `concept_signal`<br>Sensitivity: **0.83** $[0.66, 0.90]$<br>FAR: $0.0\%$ | `concept_signal`<br>Sensitivity: **1.00** $[0.84, 1.00]$<br>FAR: $0.0\%$ |
+| **Covariate Shift** | `kl_agg`<br>Sensitivity: **1.00** $[0.97, 1.00]$<br>FAR: $0.0\%$ | `kl_agg`<br>Sensitivity: **1.00** $[0.97, 1.00]$<br>FAR: $0.0\%$ | `pred_prop_psi`<br>Sensitivity: **0.83** $[0.76, 0.89]$<br>FAR: $0.0\%$ |
+| **Label Shift** | `concept_signal`<br>Sensitivity: **1.00** $[0.97, 1.00]$<br>FAR: $0.0\%$ | `pred_prop_psi`<br>Sensitivity: **1.00** $[0.97, 1.00]$<br>FAR: $0.0\%$ | `pred_prop_psi`<br>Sensitivity: **1.00** $[0.97, 1.00]$<br>FAR: $0.0\%$ |
+| **Concept Drift** | `concept_signal` (unconstrained: **0.97** $[0.79, 0.99]$)<br>*(pure swap: 0.00, see §6.2)*<br>FAR: $0.0\%$ | `pred_prop_psi`<br>Sensitivity: **0.98** $[0.94, 1.00]$<br>FAR: $0.0\%$ | `concept_signal`<br>Sensitivity: **1.00** $[0.97, 1.00]$<br>FAR: $0.0\%$ |
 
 ---
 
@@ -190,33 +190,39 @@ The system’s empirical behavior is characterized by four fundamental engineeri
 
 ### Curve 1: Sensitivity (TPR) vs. False Alarm Rate (FPR) ROC Frontier
 *(Generated in `tradeoff_1_roc_curves.png`)*
-Sweeping detection thresholds $\tau$ across the 5 metrics on severe abrupt covariate shift reveals:
-- `psi_agg` achieves an Area Under the ROC Curve (AUC) of **0.985**, achieving $100\%$ True Positive Rate at $0.0\%$ False Positive Rate.
-- `pred_prop_psi` achieves an AUC of **0.942**.
-- `centroid_dist` achieves an AUC of **0.880** after Winsorization (up from $0.512$ un-Winsorized).
+Evaluated across streaming batches using strictly disjoint train/stream partitioning and standard scikit-learn ROC analysis across failure modes:
+- `psi_agg` achieves an Area Under the ROC Curve (AUC) of **0.88** across pooled streaming scenarios, and **1.00** on isolated covariate shift.
+- `kl_agg` achieves an AUC of **0.88** (and **1.00** on isolated covariate shift).
+- `pred_prop_psi` achieves an AUC of **0.83** across pooled scenarios (and **1.00** on label shift).
+- `concept_signal` achieves an AUC of **0.76** across pooled scenarios (and **1.00** on concept drift).
+- `centroid_dist` achieves an AUC of **0.73** pooled (**0.54–0.59** on Give Me Some Credit, but **>0.95** on Taiwan and Adult).
+
+> [!NOTE]
+> **Why PCA Centroid Distance Fails on Give Me Some Credit:** Even with non-parametric Winsorization, `centroid_dist` achieves an AUC of only $\approx 0.54\text{--}0.59$ on Give Me Some Credit. In this dataset, `DebtRatio` exhibits extreme heavy tails (standard deviation $\approx 150$, 99th percentile $811.0$). A $+1.0 \times \text{IQR}$ shift ($\delta \approx 0.7$) represents only $\approx 0.005$ standard deviations, which is completely lost in the 3D PCA subspace relative to the baseline centroid noise floor ($\approx 0.038\text{--}0.054$). Furthermore, with a static uncalibrated threshold of $1.0$, sensitivity is $0.00$ across all datasets because post-onset centroid distance never reaches $1.0$ (peaking at $0.04$ on Credit, $0.55$ on Taiwan, and $0.35$ on Adult). Calibrating thresholds to empirical noise floors ($\mu + 3\sigma$) is mandatory for embedding-based monitoring.
 
 ### Curve 2: Debounce Confirmation Window vs. False Alarms & Detection Lag
 *(Generated in `tradeoff_2_debounce_lag_vs_far.png`)*
-Evaluating confirmation window $k \in \{1, 2, 3, 4, 5\}$ on moderate abrupt covariate shift demonstrates the classic reliability-latency trade-off:
-- At $k = 1$ (immediate triggering): Pre-onset False Alarm Rate is **12.4%**, with a detection lag of **1.0 batch**.
-- At $k = 2$ (the sweet spot): Pre-onset False Alarm Rate drops to **0.0%**, with detection lag increasing modestly to **2.0 batches**.
-- At $k = 5$ (heavy damping): False Alarm Rate is **0.0%**, but detection lag increases to **5.0 batches**, delaying remediation.
+Evaluating confirmation window $k \in \{1, 2, 3, 4, 5\}$ using empirically calibrated operational thresholds on streaming batches demonstrates the classic reliability-latency trade-off:
+- At $k = 1$ (immediate triggering): Pre-onset False Alarm Rate is **34.0%**, with a detection lag of **0.0 batches**.
+- At $k = 2$ (the operational sweet spot): False Alarm Rate drops by more than half to **14.0%**, with detection lag at **0.6 batches**.
+- At $k = 3$: False Alarm Rate drops sharply to **2.0%**, with detection lag at **1.2 batches**.
+- At $k = 4$ and $k = 5$ (heavy damping): False Alarm Rate drops to **0.0%**, while detection lag increases to **2.2 and 3.2 batches**, respectively.
 
 ### Curve 3: Detection Lag vs. Injected Shift Severity
 *(Generated in `tradeoff_3_lag_vs_severity.png`)*
 Detection latency scales inversely with shift magnitude:
-- **Severe Shifts:** Detected within **2.0 batches** (the theoretical minimum under $k=2$ debouncing).
+- **Severe Shifts:** Detected within **1.0 to 2.0 batches** (the theoretical minimum under debouncing).
 - **Moderate Shifts:** Detected within **2.1 to 3.4 batches**.
 - **Mild Shifts:** Detected within **5.2 to 8.6 batches** under gradual onset, reflecting the time required for the linear ramp to accumulate sufficient statistical mass.
 
 ### Curve 4: Computational Cost vs. Detection Capability Frontier
-*(Generated in `tradeoff_4_cost_capability_frontier.png`)*
-Benchmarking execution latency against failure mode coverage:
-- `psi_agg + kl_agg`: **2.28 ms/batch** (Throughput: ~438 batches/sec) — Detects Covariate Shift.
-- `pred_prop_psi`: **3.15 ms/batch** (Throughput: ~317 batches/sec) — Detects Label Shift + High-Weight Covariate Shift.
-- `centroid_dist`: **1.84 ms/batch** (Throughput: ~543 batches/sec) — Low reliability standalone.
-- `concept_signal`: **52.1 ms/batch** (Throughput: ~19 batches/sec) — Requires label joining and Brier computation; exclusively detects Concept Drift.
-- **Combined Full Pipeline:** **58.9 ms/batch** (~17 batches/sec), providing comprehensive coverage of all three failure modes.
+*(Generated in `tradeoff_4_cost_capability_frontier.png` and `benchmark_all.csv`)*
+Benchmarking execution latency against failure mode coverage (measured on Give Me Some Credit, $N=5,000$ per batch):
+- `psi_agg + kl_agg`: **1.32 ms/batch** (Throughput: ~757 batches/sec, 1.9 KB) — Unsupervised feature divergence; detects Covariate Shift.
+- `centroid_dist`: **14.53 ms/batch** (Throughput: ~69 batches/sec, 944 KB) — PCA embedding distance.
+- `pred_prop_psi`: **14.58 ms/batch** (Throughput: ~69 batches/sec, 317 KB) — Model probability divergence; detects Label Shift + High-Weight Covariate Shift.
+- `concept_signal`: **20.55 ms/batch** (Throughput: ~49 batches/sec, 4.1 KB) — 20% labeled trickle calibration check; detects Concept Drift.
+- **Combined Full Pipeline:** **50.99 ms/batch** (~20 batches/sec, 1.26 MB), providing complete coverage of all failure modes.
 
 ---
 
@@ -253,7 +259,7 @@ Streaming Batches
 +-------------------------------------------------------------+
 | TIER 1: Unsupervised Input & Output Gate (Real-time, <5 ms) |
 | - PSI Monitor on key numerical features (tau = 0.10)        |
-| - pred_prop_psi on model output probabilities (tau = 0.10)  |
+| - pred_prop_psi on model output probabilities (tau = 0.015) |
 | - Debounce window: k = 2 consecutive batches                |
 +-------------------------------------------------------------+
        |
@@ -262,7 +268,7 @@ Streaming Batches
 +-------------------------------------------------------------+
 | TIER 2: Supervised Performance Verification (Delayed trickle)|
 | - 10-20% random sample with asynchronous label joins        |
-| - concept_signal tracking Brier score degradation (tau=0.02)|
+| - concept_signal tracking Brier score degradation (tau=0.025)|
 +-------------------------------------------------------------+
        |
        v
@@ -290,7 +296,7 @@ Streaming Batches
 To verify all claims, execute tests, and regenerate every trade-off curve and summary table from scratch:
 
 ```bash
-# Run unit test suite (20 automated tests)
+# Run unit test suite (23 automated tests)
 python -m pytest tests/test_core.py -v
 
 # Regenerate full experimental results across all 3 datasets

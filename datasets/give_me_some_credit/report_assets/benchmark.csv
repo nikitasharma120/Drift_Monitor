@@ -1,6 +1,6 @@
-detector,per_batch_ms,per_batch_ms_std,one_time_fit_ms,throughput_batches_per_sec,approx_memory_kb
-psi_agg + kl_agg (shared cached bins),1.1591,0.424,17.69,862.7,2.6
-centroid_dist,5.3594,0.6836,19.86,186.6,941.8
-pred_prop_psi,14.1614,2.8614,127.01,70.6,320.3
-concept_signal,20.7124,2.123,36.03,48.3,4.1
-ALL 5 COMBINED (full pipeline per batch),41.3923,,182.89,24.2,1268.8
+detector,per_batch_ms,per_batch_ms_std,one_time_fit_ms,throughput_batches_per_sec,approx_memory_kb,dataset
+psi_agg + kl_agg (shared cached bins),1.3208,0.4541,14.12,757.1,1.9,Give Me Some Credit
+centroid_dist,14.5261,2.1647,61.54,68.8,943.6,Give Me Some Credit
+pred_prop_psi,14.5849,1.8331,158.19,68.6,316.9,Give Me Some Credit
+concept_signal,20.5541,4.0771,37.64,48.7,4.1,Give Me Some Credit
+ALL 5 COMBINED (full pipeline per batch),50.9859,,271.49,19.6,1266.5,Give Me Some Credit

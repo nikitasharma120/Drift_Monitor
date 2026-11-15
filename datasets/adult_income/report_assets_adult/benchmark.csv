@@ -1,6 +1,6 @@
-detector,per_batch_ms,per_batch_ms_std,one_time_fit_ms,throughput_batches_per_sec,approx_memory_kb
-psi_agg + kl_agg (shared cached bins),1.0239,0.3853,12.68,976.6,1.6
-centroid_dist,6.4564,1.3943,12.37,154.9,383.4
-pred_prop_psi,19.4606,7.587,59.69,51.4,133.0
-concept_signal,34.1922,22.0765,15.22,29.2,3.5
-ALL 5 COMBINED (full pipeline per batch),61.1331,,87.28,16.4,521.5
+detector,per_batch_ms,per_batch_ms_std,one_time_fit_ms,throughput_batches_per_sec,approx_memory_kb,dataset
+psi_agg + kl_agg (shared cached bins),0.9532,0.2571,8.32,1049.1,1.2,Adult Census Income
+centroid_dist,14.6948,1.0747,28.14,68.1,384.8,Adult Census Income
+pred_prop_psi,18.0046,5.3543,60.82,55.5,130.2,Adult Census Income
+concept_signal,28.8806,7.7668,19.59,34.6,3.5,Adult Census Income
+ALL 5 COMBINED (full pipeline per batch),62.5332,,116.87,16.0,519.7,Adult Census Income

@@ -1,6 +1,7 @@
 """metrics.py — PSI, KL divergence, and PCA-based embedding drift."""
 
 import numpy as np
+from scipy.stats import ks_2samp
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 
@@ -121,3 +122,61 @@ class EmbeddingDriftDetector:
         centroid_dist = float(np.linalg.norm(emb.mean(axis=0) - self.ref_centroid))
         emb_psi = psi(self.ref_embedding[:, 0], emb[:, 0])
         return {"centroid_dist": centroid_dist, "embedding_psi": emb_psi}
+
+
+def ks_two_sample_test(reference_df, batch_df, features, alpha: float = 0.05) -> dict:
+    """Classical two-sample Kolmogorov-Smirnov test baseline.
+    Computes supremum divergence D and p-value per feature with Bonferroni correction."""
+    stat_dict, pval_dict = {}, {}
+    bonferroni_alpha = alpha / max(len(features), 1)
+    for f in features:
+        ref_v = reference_df[f].dropna().values
+        cur_v = batch_df[f].dropna().values
+        if len(ref_v) > 0 and len(cur_v) > 0:
+            res = ks_2samp(ref_v, cur_v)
+            stat_dict[f] = float(res.statistic)
+            pval_dict[f] = float(res.pvalue)
+        else:
+            stat_dict[f] = 0.0
+            pval_dict[f] = 1.0
+
+    max_stat = float(np.max(list(stat_dict.values()))) if stat_dict else 0.0
+    min_pval = float(np.min(list(pval_dict.values()))) if pval_dict else 1.0
+    return {
+        "ks_stat_max": max_stat,
+        "ks_pval_min": min_pval,
+        "ks_alert": bool(min_pval < bonferroni_alpha),
+        "ks_stats": stat_dict,
+        "ks_pvals": pval_dict
+    }
+
+
+def calibrate_empirical_thresholds(clean_batches, psikl_monitor, emb_detector, pred_detector=None, perf_detector=None, k_sigma: float = 3.0) -> dict:
+    """Measures empirical noise floor on clean unshifted reference batches and calibrates
+    detection thresholds at mean + k_sigma * std. Prevents uncalibrated threshold failure."""
+    scores = {"psi_agg": [], "kl_agg": [], "centroid_dist": []}
+    if pred_detector is not None:
+        scores["pred_prop_psi"] = []
+    if perf_detector is not None:
+        scores["concept_signal"] = []
+
+    for b in clean_batches:
+        psikl_res = psikl_monitor.scores(b)
+        scores["psi_agg"].append(aggregate(psikl_res["psi"], "max"))
+        scores["kl_agg"].append(aggregate(psikl_res["kl"], "max"))
+        scores["centroid_dist"].append(emb_detector.drift_score(b)["centroid_dist"])
+        if pred_detector is not None:
+            scores["pred_prop_psi"].append(pred_detector.drift_score(b)["pred_prop_psi"])
+        if perf_detector is not None:
+            scores["concept_signal"].append(perf_detector.drift_score(b)["concept_signal"])
+
+    thresholds = {}
+    for m, vals in scores.items():
+        arr = np.array(vals)
+        mu = float(np.mean(arr))
+        sigma = float(np.std(arr))
+        mod_th = float(max(mu + k_sigma * sigma, 1e-4))
+        sig_th = float(max(mu + (k_sigma + 2.0) * sigma, mod_th * 1.5))
+        thresholds[m] = {"moderate": round(mod_th, 4), "significant": round(sig_th, 4), "noise_floor": round(mu, 4)}
+    return thresholds
+

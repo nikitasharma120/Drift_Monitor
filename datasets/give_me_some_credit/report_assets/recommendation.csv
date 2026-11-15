@@ -1,4 +1,4 @@
-shift_type,recommended_detector,mean_sensitivity,sensitivity_ci_low,sensitivity_ci_high
-concept,concept_signal,0.9666666666666667,0.7931533847701236,0.9897918314346051
-covariate,kl_agg,1.0,0.8388698745050668,1.0
-label,concept_signal,1.0,0.8388698745050668,1.0
+shift_type,recommended_detector,mean_sensitivity,sensitivity_ci_low,sensitivity_ci_high,dataset
+concept,centroid_dist,0.0,0.0,0.031020271055929513,Give Me Some Credit
+covariate,kl_agg,1.0,0.9689797289440706,1.0,Give Me Some Credit
+label,concept_signal,1.0,0.9689797289440706,1.0,Give Me Some Credit

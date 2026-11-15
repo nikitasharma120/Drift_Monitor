@@ -21,7 +21,7 @@ import matplotlib.pyplot as plt
 from drift_monitor import DriftMonitorConfig, load_dataset
 from drift_monitor.config import get_preset_config
 from drift_monitor.injection import make_batches, inject
-from drift_monitor.metrics import EmbeddingDriftDetector, PSIKLMonitor, aggregate
+from drift_monitor.metrics import EmbeddingDriftDetector, PSIKLMonitor, aggregate, calibrate_empirical_thresholds
 from drift_monitor.reference_model import train_reference_model, PredictedProportionDetector
 from drift_monitor.performance_monitor import PerformanceMonitor
 from drift_monitor.monitor import run_monitor, detection_lag, false_alarm_rate
@@ -37,64 +37,80 @@ from drift_monitor.viz import (
 )
 
 
-def compute_roc_tradeoff_data(df, config, n_thresholds=20):
-    """Sweeps detection thresholds to generate continuous ROC trade-off curves."""
-    ref_batches = make_batches(df, config.n_batches, seed=0)
-    ref_df = pd.concat(ref_batches[:config.onset_batch]).reset_index(drop=True)
-    stream_batch = inject("covariate", "severe", "abrupt", 42, df, config)
-    
+def compute_roc_tradeoff_data(df, config):
+    """Sweeps detection thresholds using disjoint train/stream splits and standard ROC analysis."""
+    from sklearn.metrics import roc_curve, roc_auc_score
+
+    n_half = len(df) // 2
+    ref_df = df.iloc[:n_half].reset_index(drop=True)
+    stream_pool = df.iloc[n_half:].reset_index(drop=True)
+
     psikl = PSIKLMonitor(config.features, config.n_bins).fit(ref_df)
     detector = EmbeddingDriftDetector(config.features, config.embedding_components).fit(ref_df)
     model = train_reference_model(ref_df, config)
     pred_detector = PredictedProportionDetector(model, config.features).fit(ref_df)
     perf_detector = PerformanceMonitor(model, config.features, config.label_col).fit(ref_df)
 
-    # Collect raw metric values on stream
+    # Collect raw metric values on stream across diverse shifts
     metric_records = []
-    for i, b in enumerate(stream_batch):
-        scores = psikl.scores(b)
-        emb = detector.drift_score(b)
-        pred = pred_detector.drift_score(b)
-        perf = perf_detector.drift_score(b)
-        metric_records.append({
-            "batch": i,
-            "is_drift": i >= config.onset_batch,
-            "psi_agg": aggregate(scores["psi"], "max"),
-            "kl_agg": aggregate(scores["kl"], "max"),
-            "centroid_dist": emb["centroid_dist"],
-            "pred_prop_psi": pred["pred_prop_psi"],
-            "concept_signal": perf["concept_signal"]
-        })
+    for shift in ["covariate", "label", "concept"]:
+        stream_batch = inject(shift, "severe", "abrupt", 42, stream_pool, config)
+        for i, b in enumerate(stream_batch):
+            scores = psikl.scores(b)
+            emb = detector.drift_score(b)
+            pred = pred_detector.drift_score(b)
+            perf = perf_detector.drift_score(b)
+            metric_records.append({
+                "batch": i,
+                "is_drift": 1 if i >= config.onset_batch else 0,
+                "psi_agg": aggregate(scores["psi"], "max"),
+                "kl_agg": aggregate(scores["kl"], "max"),
+                "centroid_dist": emb["centroid_dist"],
+                "pred_prop_psi": pred["pred_prop_psi"],
+                "concept_signal": perf["concept_signal"]
+            })
     m_df = pd.DataFrame(metric_records)
-    
+
     roc_dict = {}
     for m in ["psi_agg", "kl_agg", "centroid_dist", "pred_prop_psi", "concept_signal"]:
-        max_val = max(float(m_df[m].max()), 1e-4)
-        thresholds = np.linspace(0.001, max_val * 1.2, n_thresholds)
-        fprs, tprs = [], []
-        for th in thresholds:
-            tpr = float((m_df[m_df["is_drift"]][m] >= th).mean())
-            fpr = float((m_df[~m_df["is_drift"]][m] >= th).mean())
-            tprs.append(tpr)
-            fprs.append(fpr)
-        roc_dict[m] = (fprs, tprs)
+        fpr, tpr, _ = roc_curve(m_df["is_drift"], m_df[m])
+        auc = roc_auc_score(m_df["is_drift"], m_df[m])
+        roc_dict[f"{m} (AUC={auc:.2f})"] = (fpr, tpr)
     return roc_dict
 
 
-def compute_debounce_curve(df, config):
-    """Computes Trade-Off Curve 2: False Alarm Rate vs. Detection Lag across window sizes (k=1 to 5)."""
-    rows = []
-    ref_batches = make_batches(df, config.n_batches, seed=0)
-    ref_df = pd.concat(ref_batches[:config.onset_batch]).reset_index(drop=True)
-    batches = inject("covariate", "moderate", "abrupt", 42, df, config)
+def compute_debounce_curve(df, config, n_seeds=5):
+    """Computes Trade-Off Curve 2: False Alarm Rate vs. Detection Lag across window sizes (k=1 to 5)
+    using calibrated threshold to demonstrate genuine single-batch noise vs. sustained drift trade-off."""
+    n_half = len(df) // 2
+    ref_df = df.iloc[:n_half].reset_index(drop=True)
+    stream_pool = df.iloc[n_half:].reset_index(drop=True)
+
+    clean_batches = make_batches(ref_df, 20, seed=42)
+    psikl = PSIKLMonitor(config.features, config.n_bins).fit(ref_df)
     detector = EmbeddingDriftDetector(config.features, config.embedding_components).fit(ref_df)
     
+    calibrated = calibrate_empirical_thresholds(clean_batches, psikl, detector, k_sigma=3.2)
+    th = calibrated["psi_agg"]["moderate"]
+
+    records = {k: {"far": [], "lag": []} for k in [1, 2, 3, 4, 5]}
+    seeds = [10, 20, 30, 40, 50][:n_seeds]
+    for s in seeds:
+        batches = inject("covariate", "moderate", "abrupt", s, stream_pool, config)
+        for k in [1, 2, 3, 4, 5]:
+            c = get_preset_config("give_me_some_credit", consecutive_batches_required=k)
+            c.alert_thresholds["psi_agg"]["moderate"] = th
+            res = run_monitor(batches, ref_df, detector, c)
+            far = false_alarm_rate(res, config.onset_batch, "psi_agg_alert")
+            lag = detection_lag(res, config.onset_batch, "psi_agg_alert")
+            records[k]["far"].append(far)
+            records[k]["lag"].append(lag if lag is not None else 10)
+
+    rows = []
     for k in [1, 2, 3, 4, 5]:
-        cfg = get_preset_config("give_me_some_credit", consecutive_batches_required=k)
-        res = run_monitor(batches, ref_df, detector, cfg)
-        lag = detection_lag(res, config.onset_batch, "psi_agg_alert")
-        far = false_alarm_rate(res, config.onset_batch, "psi_agg_alert")
-        rows.append({"window_size": k, "false_alarm_rate": far, "mean_lag": lag if lag is not None else 10})
+        mean_far = float(np.mean(records[k]["far"]))
+        mean_lag = float(np.mean(records[k]["lag"]))
+        rows.append({"window_size": k, "false_alarm_rate": mean_far, "mean_lag": mean_lag})
     return pd.DataFrame(rows)
 
 
@@ -145,10 +161,32 @@ def main():
         rec["dataset"] = display_name
         all_recommendations.append(rec)
 
+        # Save individual dataset assets into its own directory
+        per_dataset_dir = {
+            "give_me_some_credit": "datasets/give_me_some_credit/report_assets",
+            "taiwan_credit_default": "datasets/taiwan_credit_default/report_assets_taiwan",
+            "adult_income": "datasets/adult_income/report_assets_adult",
+        }.get(preset_key, f"datasets/{preset_key}/report_assets")
+        os.makedirs(per_dataset_dir, exist_ok=True)
+
+        summary.to_csv(f"{per_dataset_dir}/evaluation_summary.csv", index=False)
+        bench.to_csv(f"{per_dataset_dir}/benchmark.csv", index=False)
+        rec.to_csv(f"{per_dataset_dir}/recommendation.csv", index=False)
+
+        failures = find_failure_modes(summary)
+        failures.to_csv(f"{per_dataset_dir}/failure_modes.csv", index=False)
+
+        fig_bar, comp = metric_comparison_bar(summary, config.shift_types,
+                                             ["psi_agg", "kl_agg", "centroid_dist", "pred_prop_psi", "concept_signal"])
+        fig_bar.savefig(f"{per_dataset_dir}/metric_comparison.png", dpi=120)
+        plt.close(fig_bar)
+        comp.to_csv(f"{per_dataset_dir}/metric_comparison_table.csv")
+
         # Individual dataset heatmaps
         for onset in config.onsets:
             fig = sensitivity_heatmap(summary, config.shift_types, config.severities,
                                       ["psi_agg", "kl_agg", "centroid_dist", "pred_prop_psi", "concept_signal"], onset)
+            fig.savefig(f"{per_dataset_dir}/heatmap_{onset}.png", dpi=120)
             fig.savefig(f"{out_dir}/heatmap_{preset_key}_{onset}.png", dpi=120)
             plt.close(fig)
 

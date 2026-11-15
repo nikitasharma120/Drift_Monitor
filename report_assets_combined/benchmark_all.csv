@@ -1,16 +1,16 @@
 detector,per_batch_ms,per_batch_ms_std,one_time_fit_ms,throughput_batches_per_sec,approx_memory_kb,dataset
-psi_agg + kl_agg (shared cached bins),2.3738,1.9648,17.28,421.3,1.9,Give Me Some Credit
-centroid_dist,14.5242,3.1361,73.72,68.9,943.6,Give Me Some Credit
-pred_prop_psi,19.8713,7.6126,203.44,50.3,316.9,Give Me Some Credit
-concept_signal,21.9572,3.0202,48.23,45.5,4.1,Give Me Some Credit
-ALL 5 COMBINED (full pipeline per batch),58.7265,,342.67,17.0,1266.5,Give Me Some Credit
-psi_agg + kl_agg (shared cached bins),2.5503,1.4458,22.08,392.1,4.0,Taiwan Credit Default
-centroid_dist,9.843,1.5988,53.72,101.6,239.2,Taiwan Credit Default
-pred_prop_psi,11.3556,1.775,102.43,88.1,82.5,Taiwan Credit Default
-concept_signal,20.7624,3.6738,24.72,48.2,4.8,Taiwan Credit Default
-ALL 5 COMBINED (full pipeline per batch),44.5113,,202.95,22.5,330.5,Taiwan Credit Default
-psi_agg + kl_agg (shared cached bins),0.6318,0.1817,5.26,1582.8,1.2,Adult Census Income
-centroid_dist,8.4857,0.6012,25.71,117.8,384.8,Adult Census Income
-pred_prop_psi,10.0458,2.2404,50.95,99.5,130.2,Adult Census Income
-concept_signal,17.3171,4.418,15.25,57.7,3.5,Adult Census Income
-ALL 5 COMBINED (full pipeline per batch),36.4804,,97.17,27.4,519.7,Adult Census Income
+psi_agg + kl_agg (shared cached bins),1.3208,0.4541,14.12,757.1,1.9,Give Me Some Credit
+centroid_dist,14.5261,2.1647,61.54,68.8,943.6,Give Me Some Credit
+pred_prop_psi,14.5849,1.8331,158.19,68.6,316.9,Give Me Some Credit
+concept_signal,20.5541,4.0771,37.64,48.7,4.1,Give Me Some Credit
+ALL 5 COMBINED (full pipeline per batch),50.9859,,271.49,19.6,1266.5,Give Me Some Credit
+psi_agg + kl_agg (shared cached bins),2.3574,1.0247,12.95,424.2,4.0,Taiwan Credit Default
+centroid_dist,12.1498,2.5358,36.67,82.3,239.2,Taiwan Credit Default
+pred_prop_psi,11.0145,1.6874,86.48,90.8,82.5,Taiwan Credit Default
+concept_signal,22.4073,4.7913,21.32,44.6,4.8,Taiwan Credit Default
+ALL 5 COMBINED (full pipeline per batch),47.929,,157.42,20.9,330.5,Taiwan Credit Default
+psi_agg + kl_agg (shared cached bins),0.9532,0.2571,8.32,1049.1,1.2,Adult Census Income
+centroid_dist,14.6948,1.0747,28.14,68.1,384.8,Adult Census Income
+pred_prop_psi,18.0046,5.3543,60.82,55.5,130.2,Adult Census Income
+concept_signal,28.8806,7.7668,19.59,34.6,3.5,Adult Census Income
+ALL 5 COMBINED (full pipeline per batch),62.5332,,116.87,16.0,519.7,Adult Census Income

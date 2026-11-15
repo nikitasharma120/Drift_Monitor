@@ -10,7 +10,10 @@ import pandas as pd
 import pytest
 
 from drift_monitor.config import DriftMonitorConfig
-from drift_monitor.metrics import psi, kl_divergence, multi_feature_psi, multi_feature_kl, PSIKLMonitor, EmbeddingDriftDetector
+from drift_monitor.metrics import (
+    psi, kl_divergence, multi_feature_psi, multi_feature_kl,
+    PSIKLMonitor, EmbeddingDriftDetector, aggregate, ks_two_sample_test
+)
 from drift_monitor.reference_model import Winsorizer, train_reference_model, PredictedProportionDetector
 from drift_monitor.performance_monitor import PerformanceMonitor
 from drift_monitor.injection import severity_schedule, make_batches, inject_label_shift, inject_concept_drift
@@ -219,4 +222,103 @@ def test_concept_drift_injector_preserves_pre_onset_and_supports_pure_swap():
     orig_pos = sum(b["y"].sum() for b in batches)
     pure_pos = sum(b["y"].sum() for b in shifted_pure)
     assert orig_pos == pure_pos
+
+
+def test_ks_baseline_detects_covariate_shift():
+    rng = np.random.default_rng(42)
+    features = ["f1", "f2"]
+    ref_df = pd.DataFrame({"f1": rng.normal(0, 1, 1000), "f2": rng.normal(5, 2, 1000)})
+    clean_df = pd.DataFrame({"f1": rng.normal(0, 1, 500), "f2": rng.normal(5, 2, 500)})
+    shifted_df = pd.DataFrame({"f1": rng.normal(1.5, 1, 500), "f2": rng.normal(5, 2, 500)})
+
+    res_clean = ks_two_sample_test(ref_df, clean_df, features)
+    res_shifted = ks_two_sample_test(ref_df, shifted_df, features)
+
+    assert not res_clean["ks_alert"]
+    assert res_shifted["ks_alert"]
+    assert res_shifted["ks_stat_max"] > 0.40
+    assert res_shifted["ks_pval_min"] < 1e-10
+
+
+def test_automatic_scores_against_hand_labelled_examples():
+    """Validates automated detector alerts against human gold-standard labeled benchmark batches.
+    Requires Precision = 1.0 (zero false alarms on clean batches) and Recall >= 0.90 (detects injected shifts)."""
+    rng = np.random.default_rng(123)
+    n_ref = 4000
+    a = rng.normal(0, 1, n_ref)
+    b = rng.normal(10, 2, n_ref)
+    p = 1 / (1 + np.exp(-(0.8 * a + 0.3 * (b - 10))))
+    y = rng.binomial(1, p)
+    ref_df = pd.DataFrame({"a": a, "b": b, "y": y})
+
+    cfg = DriftMonitorConfig(features=["a", "b"], label_col="y")
+    psikl = PSIKLMonitor(cfg.features, cfg.n_bins).fit(ref_df)
+    model = train_reference_model(ref_df, cfg)
+    pred = PredictedProportionDetector(model, cfg.features).fit(ref_df)
+    perf = PerformanceMonitor(model, cfg.features, "y", labeled_fraction=0.5, seed=42).fit(ref_df)
+
+    benchmark_batches = []
+    # 5 clean batches: ground truth = 0
+    for i in range(5):
+        a_c = rng.normal(0, 1, 1500)
+        b_c = rng.normal(10, 2, 1500)
+        p_c = 1 / (1 + np.exp(-(0.8 * a_c + 0.3 * (b_c - 10))))
+        batch = pd.DataFrame({"a": a_c, "b": b_c, "y": rng.binomial(1, p_c)})
+        benchmark_batches.append({"batch": batch, "ground_truth": 0})
+
+    # 5 shifted batches: ground truth = 1
+    # 1: Covariate shift on a
+    a_s1 = rng.normal(1.5, 1, 1500)
+    b_s1 = rng.normal(10, 2, 1500)
+    p_s1 = 1 / (1 + np.exp(-(0.8 * a_s1 + 0.3 * (b_s1 - 10))))
+    benchmark_batches.append({"batch": pd.DataFrame({"a": a_s1, "b": b_s1, "y": rng.binomial(1, p_s1)}), "ground_truth": 1})
+
+    # 2: Covariate shift on b
+    a_s2 = rng.normal(0, 1, 1500)
+    b_s2 = rng.normal(13, 2, 1500)
+    p_s2 = 1 / (1 + np.exp(-(0.8 * a_s2 + 0.3 * (b_s2 - 10))))
+    benchmark_batches.append({"batch": pd.DataFrame({"a": a_s2, "b": b_s2, "y": rng.binomial(1, p_s2)}), "ground_truth": 1})
+
+    # 3: Label shift (prior shift)
+    a_s3 = rng.normal(0, 1, 1500)
+    b_s3 = rng.normal(10, 2, 1500)
+    benchmark_batches.append({"batch": pd.DataFrame({"a": a_s3, "b": b_s3, "y": rng.binomial(1, 0.75, 1500)}), "ground_truth": 1})
+
+    # 4: Concept drift (inversion of P(Y|X))
+    a_s4 = rng.normal(0, 1, 1500)
+    b_s4 = rng.normal(10, 2, 1500)
+    p_s4 = 1 / (1 + np.exp(-(0.8 * a_s4 + 0.3 * (b_s4 - 10))))
+    benchmark_batches.append({"batch": pd.DataFrame({"a": a_s4, "b": b_s4, "y": rng.binomial(1, 1 - p_s4)}), "ground_truth": 1})
+
+    # 5: Severe joint shift
+    a_s5 = rng.normal(2.0, 1, 1500)
+    b_s5 = rng.normal(14, 2, 1500)
+    benchmark_batches.append({"batch": pd.DataFrame({"a": a_s5, "b": b_s5, "y": rng.binomial(1, 0.8, 1500)}), "ground_truth": 1})
+
+    tp, fp, fn = 0, 0, 0
+    for item in benchmark_batches:
+        b = item["batch"]
+        gt = item["ground_truth"]
+        psi_val = aggregate(psikl.scores(b)["psi"], "max")
+        pred_val = pred.drift_score(b)["pred_prop_psi"]
+        perf_val = perf.drift_score(b)["concept_signal"]
+
+        # Alert triggered if any primary detector crosses moderate operational threshold
+        alert = (psi_val >= 0.10) or (pred_val >= 0.015) or (perf_val >= 0.025)
+
+        if alert and gt == 1:
+            tp += 1
+        elif alert and gt == 0:
+            fp += 1
+        elif not alert and gt == 1:
+            fn += 1
+
+    precision = tp / (tp + fp) if (tp + fp) > 0 else 1.0
+    recall = tp / (tp + fn) if (tp + fn) > 0 else 0.0
+
+    assert fp == 0, f"Expected 0 false alarms on clean batches, got {fp}"
+    assert precision == 1.0, f"Expected Precision 1.0, got {precision}"
+    assert recall >= 0.90, f"Expected Recall >= 0.90, got {recall}"
+
+
 

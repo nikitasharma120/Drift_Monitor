@@ -81,9 +81,9 @@ def inject_label_shift(batches, label_col, severity, onset_batch, config, onset=
 
 
 def inject_concept_drift(batches, feature, label_col, severity, onset_batch, config, onset="abrupt",
-                          ramp_batches=None, seed=42, pure: bool = False):
+                          ramp_batches=None, seed=42, pure: bool = True):
     """Inverts the relationship P(Y|X) within a feature band.
-    - If pure=True: swaps labels between positive and negative instances in the band
+    - If pure=True (default): swaps labels between positive and negative instances in the band
       to strictly preserve the marginal label prior P(Y).
     - If pure=False: inverts labels (1 - Y) in the band, with scale adapted for
       both continuous and discrete/integer features."""
@@ -134,8 +134,10 @@ def inject_concept_drift(batches, feature, label_col, severity, onset_batch, con
     return out
 
 
-def inject(shift_type, severity, onset, seed, df, config, pure_concept: bool = False):
+def inject(shift_type, severity, onset, seed, df, config, pure_concept: bool = None):
     """Convenience dispatcher used by evaluate.py and the dashboard."""
+    if pure_concept is None:
+        pure_concept = getattr(config, "pure_concept", True)
     batches = make_batches(df, config.n_batches, seed=seed)
     if shift_type == "covariate":
         return inject_covariate_shift(batches, config.target_feature, severity, config.onset_batch,

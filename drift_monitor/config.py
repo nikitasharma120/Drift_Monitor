@@ -56,6 +56,7 @@ class DriftMonitorConfig:
     })
     labeled_trickle_fraction: float = 0.2  # fraction of each batch with "delayed" labels available
     consecutive_batches_required: int = 2  # confirmation window before an alert fires
+    pure_concept: bool = True              # pure concept drift preserving marginal P(Y)
 
     # --- Evaluation grid ---
     shift_types: list = field(default_factory=lambda: ["covariate", "label", "concept"])

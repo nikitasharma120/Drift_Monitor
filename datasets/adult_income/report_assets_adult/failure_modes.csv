@@ -1,74 +1,71 @@
-shift_type,severity,onset,metric,sensitivity,sensitivity_ci_low,sensitivity_ci_high,n_reps,mean_lag_when_detected,mean_false_alarm_rate,failure_type
-concept,mild,abrupt,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-concept,mild,abrupt,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-concept,mild,abrupt,pred_prop_psi,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-concept,mild,abrupt,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-concept,mild,gradual,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-concept,mild,gradual,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-concept,mild,gradual,pred_prop_psi,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-concept,mild,gradual,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-concept,moderate,abrupt,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-concept,moderate,abrupt,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-concept,moderate,abrupt,pred_prop_psi,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-concept,moderate,abrupt,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-concept,moderate,gradual,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-concept,moderate,gradual,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-concept,moderate,gradual,pred_prop_psi,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-concept,moderate,gradual,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-concept,severe,abrupt,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-concept,severe,abrupt,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-concept,severe,abrupt,pred_prop_psi,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-concept,severe,abrupt,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-concept,severe,gradual,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-concept,severe,gradual,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-concept,severe,gradual,pred_prop_psi,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-concept,severe,gradual,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-covariate,mild,abrupt,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-covariate,mild,abrupt,concept_signal,0.0,0.0,0.16113012549493322,20.0,,0.005,low sensitivity
-covariate,mild,abrupt,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-covariate,mild,abrupt,pred_prop_psi,0.1,0.027865893984153234,0.30103820641179335,20.0,15.0,0.0,low sensitivity
-covariate,mild,abrupt,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-covariate,mild,gradual,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-covariate,mild,gradual,concept_signal,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-covariate,mild,gradual,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-covariate,mild,gradual,pred_prop_psi,0.1,0.027865893984153234,0.30103820641179335,20.0,9.5,0.0,low sensitivity
-covariate,mild,gradual,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-covariate,moderate,abrupt,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-covariate,moderate,abrupt,concept_signal,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-covariate,moderate,abrupt,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-covariate,moderate,abrupt,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-covariate,moderate,gradual,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-covariate,moderate,gradual,concept_signal,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-covariate,moderate,gradual,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-covariate,moderate,gradual,pred_prop_psi,1.0,0.8388698745050667,1.0,20.0,6.0,0.0,slow detection
-covariate,moderate,gradual,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-covariate,severe,abrupt,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-covariate,severe,abrupt,concept_signal,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-covariate,severe,abrupt,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-covariate,severe,gradual,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-covariate,severe,gradual,concept_signal,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-covariate,severe,gradual,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-covariate,severe,gradual,psi_agg,1.0,0.8388698745050667,1.0,20.0,5.5,0.0,slow detection
-label,mild,abrupt,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-label,mild,abrupt,concept_signal,0.5,0.2992949144298199,0.7007050855701801,20.0,11.2,0.0,slow detection
-label,mild,abrupt,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-label,mild,abrupt,pred_prop_psi,0.85,0.6395767041130426,0.9476322080405041,20.0,6.647058823529412,0.025,slow detection
-label,mild,abrupt,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-label,mild,gradual,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-label,mild,gradual,concept_signal,0.7,0.4810232237710206,0.854524726031006,20.0,9.785714285714286,0.0,slow detection
-label,mild,gradual,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-label,mild,gradual,pred_prop_psi,0.95,0.7638641064874331,0.9911187805671268,20.0,8.526315789473685,0.03,slow detection
-label,mild,gradual,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-label,moderate,abrupt,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-label,moderate,abrupt,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-label,moderate,abrupt,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-label,moderate,gradual,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-label,moderate,gradual,concept_signal,1.0,0.8388698745050667,1.0,20.0,5.55,0.0,slow detection
-label,moderate,gradual,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-label,moderate,gradual,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-label,severe,abrupt,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-label,severe,abrupt,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-label,severe,abrupt,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-label,severe,gradual,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-label,severe,gradual,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
-label,severe,gradual,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,low sensitivity
+shift_type,severity,onset,metric,sensitivity,sensitivity_ci_low,sensitivity_ci_high,n_reps,mean_lag_when_detected,mean_false_alarm_rate,dataset,failure_type
+concept,mild,abrupt,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+concept,mild,abrupt,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+concept,mild,abrupt,pred_prop_psi,0.2,0.08065635327120002,0.4160217220257599,20.0,6.25,0.0,Adult Census Income,low sensitivity
+concept,mild,abrupt,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+concept,mild,gradual,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+concept,mild,gradual,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+concept,mild,gradual,pred_prop_psi,0.1,0.027865893984153234,0.30103820641179335,20.0,14.0,0.005,Adult Census Income,low sensitivity
+concept,mild,gradual,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+concept,moderate,abrupt,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+concept,moderate,abrupt,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+concept,moderate,abrupt,pred_prop_psi,0.05,0.008881219432873136,0.23613589351256675,20.0,11.0,0.01,Adult Census Income,low sensitivity
+concept,moderate,abrupt,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+concept,moderate,gradual,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+concept,moderate,gradual,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+concept,moderate,gradual,pred_prop_psi,0.1,0.027865893984153234,0.30103820641179335,20.0,5.5,0.005,Adult Census Income,low sensitivity
+concept,moderate,gradual,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+concept,severe,abrupt,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+concept,severe,abrupt,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+concept,severe,abrupt,pred_prop_psi,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+concept,severe,abrupt,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+concept,severe,gradual,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+concept,severe,gradual,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+concept,severe,gradual,pred_prop_psi,0.05,0.008881219432873136,0.23613589351256675,20.0,4.0,0.0,Adult Census Income,low sensitivity
+concept,severe,gradual,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+covariate,mild,abrupt,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+covariate,mild,abrupt,concept_signal,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+covariate,mild,abrupt,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+covariate,mild,abrupt,pred_prop_psi,0.55,0.3420820083075997,0.7418049791429071,20.0,8.272727272727273,0.0,Adult Census Income,slow detection
+covariate,mild,abrupt,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+covariate,mild,gradual,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+covariate,mild,gradual,concept_signal,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+covariate,mild,gradual,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+covariate,mild,gradual,pred_prop_psi,0.45,0.25819502085709295,0.6579179916924003,20.0,8.777777777777779,0.0,Adult Census Income,low sensitivity
+covariate,mild,gradual,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+covariate,moderate,abrupt,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+covariate,moderate,abrupt,concept_signal,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+covariate,moderate,abrupt,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+covariate,moderate,abrupt,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+covariate,moderate,gradual,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+covariate,moderate,gradual,concept_signal,0.0,0.0,0.16113012549493322,20.0,,0.005,Adult Census Income,low sensitivity
+covariate,moderate,gradual,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+covariate,moderate,gradual,pred_prop_psi,1.0,0.8388698745050667,1.0,20.0,5.85,0.0,Adult Census Income,slow detection
+covariate,moderate,gradual,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+covariate,severe,abrupt,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+covariate,severe,abrupt,concept_signal,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+covariate,severe,abrupt,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+covariate,severe,gradual,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+covariate,severe,gradual,concept_signal,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+covariate,severe,gradual,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+covariate,severe,gradual,psi_agg,1.0,0.8388698745050667,1.0,20.0,5.4,0.0,Adult Census Income,slow detection
+label,mild,abrupt,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+label,mild,abrupt,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+label,mild,abrupt,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+label,mild,gradual,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+label,mild,gradual,concept_signal,0.5,0.2992949144298199,0.7007050855701801,20.0,9.2,0.0,Adult Census Income,slow detection
+label,mild,gradual,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+label,mild,gradual,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+label,moderate,abrupt,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+label,moderate,abrupt,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+label,moderate,abrupt,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+label,moderate,gradual,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+label,moderate,gradual,concept_signal,1.0,0.8388698745050667,1.0,20.0,6.65,0.0,Adult Census Income,slow detection
+label,moderate,gradual,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+label,moderate,gradual,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+label,severe,abrupt,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+label,severe,abrupt,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+label,severe,abrupt,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+label,severe,gradual,centroid_dist,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+label,severe,gradual,kl_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
+label,severe,gradual,psi_agg,0.0,0.0,0.16113012549493322,20.0,,0.0,Adult Census Income,low sensitivity
