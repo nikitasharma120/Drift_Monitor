@@ -1,5 +1,5 @@
 """
-tests/test_core.py — automated correctness checks for the drift_monitor
+tests/test_core.py - automated correctness checks for the drift_monitor
 package. Run with:
 
     pytest tests/ -v
@@ -7,9 +7,7 @@ package. Run with:
 These don't replace the evaluation grid (which measures how WELL the
 system detects real shift) -- they check that the building blocks behave
 correctly in isolation, on cases simple enough to know the right answer
-by construction. Everything here was previously only checked by eyeballing
-plots and printed summaries; this is the same logic, made repeatable and
-automatic.
+by construction. They make those checks repeatable and automatic.
 """
 
 import numpy as np
@@ -110,8 +108,7 @@ def _alert_row(psi="none", kl="none", pred="none", concept="none"):
 
 
 def test_diagnosis_covariate_takes_precedence():
-    """This is the exact bug diagnosis.py was built to fix: PSI/KL firing
-    must win even when concept_signal ALSO fires (the residual leakage
+    """PSI/KL firing must win even when concept_signal ALSO fires (the residual leakage
     case documented in the report)."""
     row = _alert_row(psi="significant", concept="moderate")
     assert classify_shift(row) == "covariate"
@@ -167,12 +164,47 @@ def test_wilson_ci_widens_with_fewer_samples():
 
 def test_system_info_records_all_expected_fields():
     """Every result in this project should be traceable to the exact
-    environment that produced it -- this is what would have caught the
-    cross-environment reproducibility bug (main README, bug #4) on the
-    first attempt instead of the fourth."""
+    environment that produced it -- so a re-run can be checked against the
+    environment that produced the reported numbers."""
     info = record_system_info()
     expected_fields = {"timestamp_utc", "platform", "python_version",
                         "numpy_version", "pandas_version", "sklearn_version",
                         "scipy_version", "matplotlib_version"}
     assert expected_fields.issubset(info.keys())
     assert all(v for v in info.values())  # nothing blank
+
+
+# ---------------------------------------------------------------------------
+# Reference model quality: discrimination and calibration
+# ---------------------------------------------------------------------------
+
+def test_reference_model_auc_and_calibration():
+    """Verify that reference model training produces a discriminative classifier
+    (held-out AUC > 0.70) and is well-calibrated (mean prob close to base rate)."""
+    from drift_monitor.config import DriftMonitorConfig
+    from drift_monitor.reference_model import train_reference_model
+    from sklearn.metrics import roc_auc_score, accuracy_score
+
+    rng = np.random.default_rng(42)
+    n = 2000
+    x1 = rng.normal(0, 1, n)
+    x2 = rng.normal(0, 1, n)
+    logits = 1.5 * x1 - 1.0 * x2 - 1.0
+    probs = 1 / (1 + np.exp(-logits))
+    y = rng.binomial(1, probs)
+    df = pd.DataFrame({"x1": x1, "x2": x2, "label": y})
+
+    config = DriftMonitorConfig(features=["x1", "x2"], label_col="label")
+    ref_df = df.iloc[:1000].reset_index(drop=True)
+    test_df = df.iloc[1000:].reset_index(drop=True)
+
+    model = train_reference_model(ref_df, config)
+    test_probs = model.predict_proba(test_df[config.features])[:, 1]
+    auc = roc_auc_score(test_df["label"], test_probs)
+    acc = accuracy_score(test_df["label"], (test_probs >= 0.5).astype(int))
+
+    assert auc > 0.75
+    assert acc > 0.70
+    # Mean predicted probability matches true base rate reasonably well
+    assert abs(test_probs.mean() - test_df["label"].mean()) < 0.05
+

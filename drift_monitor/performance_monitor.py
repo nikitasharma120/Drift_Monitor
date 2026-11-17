@@ -1,5 +1,5 @@
 """
-performance_monitor.py — the concept-drift detector.
+performance_monitor.py - the concept-drift detector.
 
 PSI, KL, embedding drift, and even the predicted-proportion detector all
 watch X (or a fixed model's predictions on X). Concept drift is defined as
@@ -48,19 +48,19 @@ class PerformanceMonitor:
         self.ref_confidence = float(np.mean(np.maximum(probs, 1 - probs)))
         return self
 
-    def drift_score(self, batch_df) -> dict:
+    def drift_score(self, batch_df, probs=None) -> dict:
         # Full-batch confidence needs no labels -- cheap, always available.
-        probs_full = self.model.predict_proba(batch_df[self.features])[:, 1]
+        # probs: optional precomputed predict_proba()[:,1] for this batch.
+        probs_full = self.model.predict_proba(batch_df[self.features])[:, 1] if probs is None else probs
         confidence = float(np.mean(np.maximum(probs_full, 1 - probs_full)))
         confidence_delta = confidence - self.ref_confidence
 
         # Labeled trickle: only a random fraction of rows reveal ground truth.
         n = len(batch_df)
         n_labeled = max(1, int(round(n * self.labeled_fraction)))
-        idx = self.rng.choice(batch_df.index.values, size=n_labeled, replace=False)
-        sample = batch_df.loc[idx]
-        probs_sample = self.model.predict_proba(sample[self.features])[:, 1]
-        y_sample = sample[self.label_col].values
+        idx = self.rng.choice(n, size=n_labeled, replace=False)   # positional: the model is row-wise,
+        probs_sample = probs_full[idx]                            # so sub-sampling the full-batch probs is identical
+        y_sample = batch_df[self.label_col].to_numpy()[idx]       # to re-scoring the sampled rows
         brier = float(np.mean((probs_sample - y_sample) ** 2))
         brier_delta = brier - self.ref_brier
 

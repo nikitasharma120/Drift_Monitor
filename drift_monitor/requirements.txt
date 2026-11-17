@@ -3,7 +3,7 @@ pandas==3.0.2
 scikit-learn==1.8.0
 scipy==1.17.1
 matplotlib==3.10.0
-streamlit>=1.30
+streamlit>=1.30    # dashboard only; not imported by the evaluation code
 
 # NOTE on version pinning: numpy/pandas/scikit-learn/scipy are pinned to
 # EXACT versions as defense-in-depth, but they were NOT the root cause of

@@ -1,0 +1,7 @@
+metric,ms_per_batch,mean_sensitivity
+psi_agg,1.0492,0.3333333333333333
+kl_agg,1.0492,0.3333333333333333
+centroid_dist,8.9851,0.0
+pred_prop_psi,7.8582,0.24444444444444446
+concept_signal,6.7794,0.375
+ks_baseline,7.9645,0.6027777777777777

@@ -1,0 +1,10 @@
+{
+  "held_out_auc": 0.8308,
+  "held_out_accuracy": 0.8158,
+  "held_out_mean_pred_prob": 0.2388,
+  "held_out_true_base_rate": 0.2388,
+  "ref_mean_pred_prob": 0.2405,
+  "ref_true_base_rate": 0.2405,
+  "held_out_rows": 36630,
+  "reference_rows": 12210
+}

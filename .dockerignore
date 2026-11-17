@@ -3,8 +3,5 @@ __pycache__/
 .git/
 .venv/
 venv/
-report_assets/
-*.csv
-*.xls
-Dockerfile
-.dockerignore
+.pytest_cache/
+*.zip

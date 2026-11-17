@@ -1,4 +1,4 @@
-shift_type,recommended_detector,mean_sensitivity,sensitivity_ci_low,sensitivity_ci_high
-concept,concept_signal,1.0,0.8388698745050668,1.0
-covariate,pred_prop_psi,0.7000000000000001,0.5685352143314288,0.7670127354705979
-label,pred_prop_psi,0.9666666666666667,0.7931533847701236,0.9897918314346051
+shift_type,recommended_detector,detections,n_runs,mean_sensitivity,sensitivity_ci_low,sensitivity_ci_high,mean_false_alarm_rate,runs_with_false_alarm
+concept,concept_signal,116,120,0.9666666666666667,0.9174184205147198,0.9869626598330794,0.0,0.0
+covariate,pred_prop_psi,72,120,0.6,0.5105585981828253,0.6832373476059888,0.0,0.0
+label,pred_prop_psi,86,120,0.7166666666666667,0.6302963078582111,0.7895949080175528,0.0,0.0

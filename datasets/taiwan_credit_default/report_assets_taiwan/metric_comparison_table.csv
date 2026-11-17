@@ -1,4 +1,4 @@
-shift_type,psi_agg,kl_agg,centroid_dist,pred_prop_psi,concept_signal
-covariate,1.0,1.0,0.0,1.0,0.03333333333333333
-label,0.0,0.0,0.0,1.0,0.9916666666666667
-concept,0.0,0.0,0.0,0.19999999999999998,0.8333333333333334
+shift_type,psi_agg,kl_agg,centroid_dist,pred_prop_psi,concept_signal,ks_baseline
+covariate,1.0,1.0,0.0,0.9500000000000001,0.0,1.0
+label,0.0,0.0,0.0,0.5083333333333333,0.5583333333333333,0.4166666666666667
+concept,0.0,0.0,0.0,0.0,0.27499999999999997,0.0

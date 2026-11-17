@@ -1,0 +1,4 @@
+shift_type,detection_lag_batches_any_alert,pre_onset_false_alarm_rate_any_alert,psi_agg_pre_onset_far,kl_agg_pre_onset_far,centroid_dist_pre_onset_far,pred_prop_psi_pre_onset_far,concept_signal_pre_onset_far,ks_baseline_pre_onset_far
+covariate,1,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+label,1,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+concept,1,0.0,0.0,0.0,0.0,0.0,0.0,0.0

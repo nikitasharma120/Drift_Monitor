@@ -1,0 +1,4 @@
+shift_type,best_of_five,best_of_five_sensitivity,best_of_five_false_alarm,ks_baseline_sensitivity,ks_baseline_false_alarm,sensitivity_gain_vs_baseline
+concept,concept_signal,0.9666666666666667,0.0,0.0,0.0,0.9666666666666667
+covariate,pred_prop_psi,0.6,0.0,1.0,0.0,-0.4
+label,pred_prop_psi,0.7166666666666667,0.0,0.6083333333333333,0.0,0.10833333333333339

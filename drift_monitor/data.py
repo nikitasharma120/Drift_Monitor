@@ -1,4 +1,4 @@
-"""data.py — load a real CSV via config, or fall back to synthetic demo data."""
+"""data.py - load a real CSV via config, or fall back to synthetic demo data."""
 
 import os
 import numpy as np
@@ -51,6 +51,6 @@ def _make_synthetic_dataset(config, n_rows: int = 20000) -> pd.DataFrame:
     if not set(config.features).issubset(df.columns) or config.label_col != "label":
         print("NOTE: config.features/label_col don't match the synthetic dataset's "
               "default schema (RevolvingUtilization, age, ... / 'label'). Returning "
-              "the synthetic data as-is — set config.csv_path to use your real schema.")
+              "the synthetic data as-is - set config.csv_path to use your real schema.")
         return df
     return df[["label"] + config.features]

@@ -1,30 +1,35 @@
 """
-diagnosis.py — turns the five raw detector alerts into a single shift-type
+diagnosis.py - turns the five raw detector alerts into a single shift-type
 diagnosis, instead of reading each metric in isolation.
 
 Why this exists: concept_signal (the Brier-based performance monitor) has
 a small amount of genuine, expected leakage onto covariate shift at
 moderate/severe severity -- a fixed model's calibration CAN degrade under
 covariate shift too, since it's now scoring inputs it wasn't trained on.
-That's real model behavior, not a bug, but read in isolation it can make
+That is real model behavior, not a defect, but read in isolation it can make
 a covariate-shift batch look like it might be concept drift.
 
-The fix isn't to suppress the leakage -- it's to never read concept_signal
+The answer is not to suppress the leakage but to never read concept_signal
 in isolation. PSI/KL are the specific, high-precision detector for
-covariate shift (1.0 sensitivity everywhere in our evaluation grid,
-including every cell where concept_signal leaks), so giving them
-precedence resolves the ambiguity completely using detectors we already
-have. This mirrors the label-shift/concept-drift differential diagnosis
-documented in the Phase 5 report, Section 3.4 -- this module formalizes
-both into one function instead of leaving the combination as a manual
-reading exercise.
+covariate shift in our grids (see diagnosis_confusion.csv in each
+report_assets folder for how often precedence actually resolves it), so
+giving them precedence resolves most of that ambiguity using detectors we
+already have. This module formalizes the label-shift/concept-drift
+differential diagnosis (REPORT.md) into one function instead of
+leaving the combination as a manual reading exercise.
 
 Precedence order (checked in this order, first match wins):
   1. psi_agg or kl_agg alert  -> "covariate"
   2. pred_prop_psi AND concept_signal both alert -> "label"
   3. concept_signal alert alone -> "concept_or_mild_label"
-     (see report: this ambiguity is not yet resolved by any detector we have)
-  4. none of the above -> "none"
+     (see REPORT.md: this ambiguity is not resolved by any detector we have)
+  4. pred_prop_psi alert alone -> "label_or_subtle_covariate"
+     (an alert must never be reported as "none": the model's output distribution moved but neither
+     PSI/KL nor the Brier signal confirmed it. That pattern is what label
+     shift looks like when the labelled trickle is too small to confirm it,
+     and what a covariate shift too small for PSI/KL looks like when the
+     model is sensitive to that feature -- the two cannot be told apart.)
+  5. none of the above -> "none"
 """
 
 import pandas as pd
@@ -45,6 +50,8 @@ def classify_shift(row) -> str:
         return "label"
     if concept_fired:
         return "concept_or_mild_label"
+    if pred_fired:
+        return "label_or_subtle_covariate"
     return "none"
 
 
@@ -62,7 +69,8 @@ def diagnostic_accuracy(records_with_truth: pd.DataFrame) -> pd.DataFrame:
     precedence rule actually resolves ambiguity across the full grid,
     not just anecdotally."""
     label_map = {"covariate": "covariate", "label": "label",
-                 "concept_or_mild_label": "concept_or_mild_label", "none": "none"}
+                 "concept_or_mild_label": "concept_or_mild_label",
+                 "label_or_subtle_covariate": "label_or_subtle_covariate", "none": "none"}
     records_with_truth = records_with_truth.copy().reset_index(drop=True)
     records_with_truth["diagnosis"] = records_with_truth["diagnosis"].map(label_map)
     confusion = pd.crosstab(records_with_truth["true_shift_type"],

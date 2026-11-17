@@ -1,0 +1,28 @@
+{
+  "dataset": "taiwan",
+  "rows": 30000,
+  "batch_size": 750,
+  "n_reps": 20,
+  "n_scenarios": 18,
+  "n_runs": 360,
+  "calibration_reps": 40,
+  "severity_covariate": {
+    "mild": 0.5,
+    "moderate": 1.0,
+    "severe": 2.0
+  },
+  "severity_label": {
+    "mild": 0.05,
+    "moderate": 0.1,
+    "severe": 0.2
+  },
+  "severity_concept": {
+    "mild": 0.25,
+    "moderate": 0.5,
+    "severe": 1.0
+  },
+  "target_feature": "BILL_AMT1",
+  "consecutive_batches_required": 2,
+  "runtime_seconds": 325.7,
+  "quick_mode": false
+}

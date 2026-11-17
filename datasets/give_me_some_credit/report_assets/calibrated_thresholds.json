@@ -1,0 +1,85 @@
+{
+  "batch_size": 3006,
+  "n_features": 10,
+  "calibration_reps": 40,
+  "quantile": 0.99,
+  "margin": 1.25,
+  "thresholds": {
+    "psi_agg": {
+      "moderate": 0.1,
+      "significant": 0.25
+    },
+    "kl_agg": {
+      "moderate": 0.1,
+      "significant": 0.25
+    },
+    "centroid_dist": {
+      "moderate": 1.0,
+      "significant": 2.0
+    },
+    "pred_prop_psi": {
+      "moderate": 0.015,
+      "significant": 0.03
+    },
+    "concept_signal": {
+      "moderate": 0.025,
+      "significant": 0.05
+    },
+    "ks_baseline": {
+      "moderate": 2.0,
+      "significant": 4.0
+    }
+  },
+  "noise_floor": [
+    {
+      "metric": "psi_agg",
+      "clean_median": 0.004994441165097996,
+      "clean_q99": 0.009181471169426605,
+      "floor_moderate": 0.1,
+      "calibrated_moderate": 0.1,
+      "calibrated_significant": 0.25,
+      "raised_above_floor": false,
+      "n_clean_batches": 1200
+    },
+    {
+      "metric": "kl_agg",
+      "clean_median": 0.002490514167796087,
+      "clean_q99": 0.004592489009101856,
+      "floor_moderate": 0.1,
+      "calibrated_moderate": 0.1,
+      "calibrated_significant": 0.25,
+      "raised_above_floor": false,
+      "n_clean_batches": 1200
+    },
+    {
+      "metric": "centroid_dist",
+      "clean_median": 0.0375231311944995,
+      "clean_q99": 0.08318248038892283,
+      "floor_moderate": 1.0,
+      "calibrated_moderate": 1.0,
+      "calibrated_significant": 2.0,
+      "raised_above_floor": false,
+      "n_clean_batches": 1200
+    },
+    {
+      "metric": "pred_prop_psi",
+      "clean_median": 0.0031051785933030925,
+      "clean_q99": 0.008006762096048791,
+      "floor_moderate": 0.015,
+      "calibrated_moderate": 0.015,
+      "calibrated_significant": 0.03,
+      "raised_above_floor": false,
+      "n_clean_batches": 1200
+    },
+    {
+      "metric": "concept_signal",
+      "clean_median": 0.0,
+      "clean_q99": 0.016369884451422245,
+      "floor_moderate": 0.025,
+      "calibrated_moderate": 0.025,
+      "calibrated_significant": 0.05,
+      "raised_above_floor": false,
+      "n_clean_batches": 1200
+    }
+  ]
+}

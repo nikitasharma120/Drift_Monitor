@@ -1,13 +1,27 @@
-"""metrics.py — PSI, KL divergence, and PCA-based embedding drift."""
+"""metrics.py - PSI, KL divergence, and PCA-based embedding drift."""
 
 import numpy as np
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 
+from .preprocessing import Winsorizer
+
+
+def quantile_edges(reference: np.ndarray, n_bins: int = 10) -> np.ndarray:
+    """Quantile bin edges with duplicates removed.
+
+    On zero-inflated or low-cardinality features (Adult's capital-gain, binary
+    flags) many quantiles are identical, which would create zero-width bins.
+    Only the INTERIOR edges are de-duplicated, then -inf and +inf are added as
+    outer edges. Deduplicating all edges first and then overwriting the ends with
+    +/-inf would collapse a binary feature to a single bin and make its PSI
+    identically 0 (tests/test_design.py checks this case)."""
+    inner = np.unique(np.quantile(reference, np.linspace(0, 1, n_bins + 1))[1:-1])
+    return np.concatenate([[-np.inf], inner, [np.inf]])
+
 
 def psi(reference: np.ndarray, current: np.ndarray, n_bins: int = 10) -> float:
-    edges = np.quantile(reference, np.linspace(0, 1, n_bins + 1))
-    edges[0], edges[-1] = -np.inf, np.inf
+    edges = quantile_edges(reference, n_bins)
     ref_counts, _ = np.histogram(reference, bins=edges)
     cur_counts, _ = np.histogram(current, bins=edges)
     ref_pct = np.clip(ref_counts / max(len(reference), 1), 1e-6, None)
@@ -17,8 +31,7 @@ def psi(reference: np.ndarray, current: np.ndarray, n_bins: int = 10) -> float:
 
 def kl_divergence(reference: np.ndarray, current: np.ndarray, n_bins: int = 10) -> float:
     """KL(current || reference)."""
-    edges = np.quantile(reference, np.linspace(0, 1, n_bins + 1))
-    edges[0], edges[-1] = -np.inf, np.inf
+    edges = quantile_edges(reference, n_bins)
     ref_counts, _ = np.histogram(reference, bins=edges)
     cur_counts, _ = np.histogram(current, bins=edges)
     ref_p = np.clip(ref_counts / max(len(reference), 1), 1e-6, None)
@@ -54,8 +67,7 @@ class PSIKLMonitor:
     def fit(self, reference_df):
         for f in self.features:
             ref = reference_df[f].values
-            edges = np.quantile(ref, np.linspace(0, 1, self.n_bins + 1))
-            edges[0], edges[-1] = -np.inf, np.inf
+            edges = quantile_edges(ref, self.n_bins)
             ref_counts, _ = np.histogram(ref, bins=edges)
             self._edges[f] = edges
             self._ref_pct[f] = np.clip(ref_counts / max(len(ref), 1), 1e-6, None)
@@ -84,19 +96,21 @@ class EmbeddingDriftDetector:
 
     def __init__(self, features, n_components=3):
         self.features = features
+        self.winsorizer = Winsorizer(0.01, 0.99)   # robust to extreme outliers (e.g. DebtRatio) before PCA
         self.scaler = StandardScaler()
         self.pca = PCA(n_components=n_components, random_state=42)
         self.ref_embedding = None
         self.ref_centroid = None
 
     def fit(self, reference_df):
-        X = self.scaler.fit_transform(reference_df[self.features])
+        clipped = self.winsorizer.fit_transform(reference_df[self.features])
+        X = self.scaler.fit_transform(clipped)
         self.ref_embedding = self.pca.fit_transform(X)
         self.ref_centroid = self.ref_embedding.mean(axis=0)
         return self
 
     def transform(self, batch_df):
-        X = self.scaler.transform(batch_df[self.features])
+        X = self.scaler.transform(self.winsorizer.transform(batch_df[self.features]))
         return self.pca.transform(X)
 
     def drift_score(self, batch_df) -> dict:

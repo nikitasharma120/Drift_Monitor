@@ -1,7 +1,7 @@
 """
 drift_monitor
 =============
-A System That Notices — a reusable distribution-shift monitoring
+A System That Notices - a reusable distribution-shift monitoring
 pipeline: batch a data stream, inject/detect covariate shift, label
 shift, and concept drift, evaluate detector performance, and view
 results on a lightweight dashboard.

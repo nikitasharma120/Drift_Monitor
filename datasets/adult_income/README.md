@@ -1,185 +1,157 @@
-# Generalization Test #2 — Adult / Census Income Dataset
+# Adult Income - dataset notes
 
-**A second companion package to the main "A System That Notices" project (DS635).**
+UCI "Adult" / Census Income (Becker & Kohavi, 1996): 48,842 rows, ~24 % positives (income > $50K), six numeric features used
+(`age`, `fnlwgt`, `educational-num`, `capital-gain`, `capital-loss`, `hours-per-week`). A different domain from the two credit datasets.
+The text label (`<=50K` / `>50K`) was converted once to a binary `label` column in `adult_income.csv`. Source: a public GitHub mirror; official page https://archive.ics.uci.edu/dataset/2/adult.
 
-If you haven't read the main project's `README.md` yet, read that first.
-If you've also read `datasets/taiwan_credit_default/README.md`, even
-better — this document assumes you know both, and focuses on what a
-*third*, deliberately different dataset reveals.
+**Zero-IQR trap.** `capital-gain` and `capital-loss` have an interquartile range of exactly 0 (most people report $0). Injection is scaled by `IQR / 1.349`,
+so using either as the target feature would inject no shift at any severity, silently. `hours-per-week` is the target feature instead.
+Check the IQR before choosing a target feature on any new dataset.
 
-> **The question this package answers:** the Taiwan test showed the
-> design holds up on a second dataset in the *same domain* (credit risk).
-> Does it hold up on a dataset that isn't about credit at all?
+`hours-per-week` is integer-valued with a small IQR, so covariate shifts are small in absolute terms; this is the dataset where X-only detectors with fixed thresholds do worst.
 
-**Short answer: mostly, but this dataset broke something neither of the
-first two did, and inverted one of our most confident earlier findings.**
-Both are reported here in full, because that's more useful than a third
-clean success story would have been.
+Regenerate: `python datasets/adult_income/generate_report_assets_adult.py` or `python run_all.py`.
+Method, definitions and full results: [`../../REPORT.md`](../../REPORT.md).
 
-## 1. Why a Different Domain, Not Another Credit Dataset
+## Results (generated)
 
-Give Me Some Credit and Taiwan Credit Default both predict financial
-default from financial features (debt ratios, bill amounts, payment
-history). Even though Taiwan is a different dataset, it's arguably the
-same *kind* of problem wearing different numbers. A much stronger test of
-generalization is a dataset that shares no feature semantics with either.
+<!-- BEGIN:dataset_results -->
+### Adult Income
 
-## 2. The Dataset
+48,842 rows - batch size 1,221 - reference window 12,210 rows, disjoint from the 36,630-row stream - 18 scenarios x 20 reps = **360 runs**, each with its own fresh split, reference and fitted detectors - thresholds calibrated on 40 separate clean runs. Target feature: `hours-per-week`.
 
-**UCI "Adult" / "Census Income"** (Becker & Kohavi, 1996) —
-`adult_income.csv` in this folder. Predicts whether a person's annual
-income exceeds $50,000 from census/demographic data: age, education,
-hours worked per week, capital gains/losses, and a sampling weight
-(`fnlwgt`).
+#### Calibrated thresholds
 
-- 48,842 rows, no missing values in the numeric columns used here
-- 23.9% positive rate (>$50K) — a different class balance than either
-  earlier dataset (7% and 22.1%)
-- The original label column (`"income"`, text: `"<=50K"` / `">50K"`) was
-  converted to a binary `label` column before use; `drift_monitor`'s
-  loader expects an already-binary label, so this one conversion was done
-  once outside the shared package rather than adding string-label
-  handling into it
+Each detector's noise floor is measured on clean runs whose seeds are disjoint from every evaluation seed; `moderate = max(default floor, 1.25 x 99th percentile of clean scores)`, `significant = max(floor, 2 x moderate)`. The KS baseline is never tuned.
 
-**What changed vs. both earlier datasets:** again, nothing in
-`drift_monitor/`. Only this folder's `generate_report_assets_adult.py`
-config differs — which columns, which label, which target feature.
+| detector | default floor | clean median | clean 99th pct | calibrated 'moderate' | calibrated 'significant' | raised above floor? |
+|---|---|---|---|---|---|---|
+| psi_agg | 0.1 | 0.0103 | 0.0201 | 0.1000 | 0.2500 | no |
+| kl_agg | 0.1 | 0.0051 | 0.0100 | 0.1000 | 0.2500 | no |
+| centroid_dist | 1 | 0.0493 | 0.1086 | 1.0000 | 2.0000 | no |
+| pred_prop_psi | 0.015 | 0.0075 | 0.0189 | 0.0237 | 0.0473 | yes |
+| concept_signal | 0.025 | 0.0000 | 0.0356 | 0.0446 | 0.0891 | yes |
 
-## 3. A New Failure Mode This Dataset Exposed: Zero-IQR Features
+#### Sensitivity by shift type and severity (mean over onsets)
 
-Before running anything, we checked this dataset's numeric features the
-same way the main README's bug #1 taught us to. Two of them —
-`capital-gain` and `capital-loss` — have an **interquartile range of
-exactly zero**: most people report $0 in either category, so both the
-25th and 75th percentiles land on zero.
+| shift | severity | psi_agg | kl_agg | centroid_dist | pred_prop_psi | concept_signal | ks_baseline |
+|---|---|---|---|---|---|---|---|
+| covariate | mild | 0.03 | 0.03 | 0.00 | 0.03 | 0.00 | 1.00 |
+| covariate | moderate | 0.10 | 0.10 | 0.00 | 0.77 | 0.00 | 1.00 |
+| covariate | severe | 1.00 | 0.05 | 0.00 | 1.00 | 0.00 | 1.00 |
+| label | mild | 0.00 | 0.00 | 0.00 | 0.20 | 0.00 | 0.10 |
+| label | moderate | 0.00 | 0.00 | 0.00 | 0.95 | 0.45 | 0.72 |
+| label | severe | 0.00 | 0.00 | 0.00 | 1.00 | 1.00 | 1.00 |
+| concept | mild | 0.00 | 0.00 | 0.00 | 0.00 | 0.90 | 0.00 |
+| concept | moderate | 0.00 | 0.00 | 0.00 | 0.00 | 1.00 | 0.00 |
+| concept | severe | 0.00 | 0.00 | 0.00 | 0.00 | 1.00 | 0.00 |
 
-Our severity scaling (main README, bug #1) computes injected shift as
-`severity_multiplier × (IQR / 1.349)`. If IQR is exactly zero, **every
-severity level — mild, moderate, severe — injects exactly zero shift**,
-silently. This is a sharper, more literal version of the outlier problem
-Give Me Some Credit had; that dataset's problem was an IQR that was too
-*small relative to extreme outliers*, not an IQR that is *exactly zero*.
+#### False alarms: batch-level / share of runs with at least one
 
-**We avoided this by choosing `hours-per-week`** (a well-behaved,
-non-degenerate continuous feature) as the target feature instead, and
-are documenting the avoided failure explicitly rather than silently
-picking a feature that happens to work. If you adapt this pipeline to a
-new dataset, **check your candidate target feature's IQR before choosing
-it** — a zero (or even very small) IQR relative to the feature's actual
-range is now an explicit item on the pre-flight checklist this project's
-README recommends.
+Batch-level = fraction of the 10 pre-onset (clean) batches in a confirmed alert state. Runs-with-a-false-alarm = fraction of runs in which any pre-onset batch alerted.
 
-## 4. Results
+| shift | psi_agg | kl_agg | centroid_dist | pred_prop_psi | concept_signal | ks_baseline |
+|---|---|---|---|---|---|---|
+| covariate | 0.00% / 0.00% | 0.00% / 0.00% | 0.00% / 0.00% | 0.00% / 0.00% | 0.00% / 0.00% | 0.00% / 0.00% |
+| label | 0.00% / 0.00% | 0.00% / 0.00% | 0.00% / 0.00% | 0.00% / 0.00% | 0.00% / 0.00% | 0.00% / 0.00% |
+| concept | 0.00% / 0.00% | 0.00% / 0.00% | 0.00% / 0.00% | 0.00% / 0.00% | 0.00% / 0.00% | 0.00% / 0.00% |
 
-| Shift type | Best detector | Sensitivity | Matches earlier datasets? |
-|---|---|---|---|
-| Covariate shift | **`pred_prop_psi`** | 0.70 | ❌ **No — this is new** |
-| Label shift | `pred_prop_psi` | 0.97 | ✅ Yes (same detector as Taiwan) |
-| Concept drift | `concept_signal` | 1.00 | ✅ Yes (same detector, even stronger) |
+#### Trade-off curves
 
-### The genuinely new finding: PSI/KL are no longer the reliable covariate-shift detectors
+![trade-off curves](../../datasets/adult_income/report_assets_adult/tradeoff_curves.png)
 
-On both earlier datasets, PSI and KL divergence moved in lockstep and
-were *always* the strongest, most reliable detectors for covariate shift
-(1.00 sensitivity, every severity, every onset, on both datasets). On
-this dataset, that pattern doesn't hold:
+![severity curves](../../datasets/adult_income/report_assets_adult/severity_curves.png)
 
-| Metric | Mild | Moderate | Severe |
-|---|---|---|---|
-| PSI | 0.00 | 0.00 | **1.00** |
-| KL divergence | 0.00 | 0.00 | **0.00** — misses even severe shift entirely |
-| `pred_prop_psi` | 0.10 | **1.00** | **1.00** |
+Score AUC = threshold-free separation of pre-onset batches from fully-ramped post-onset batches. Sensitivity @ x% FAR = best sensitivity reachable with at most x% false alarms.
 
-**PSI only catches the most severe case. KL divergence misses covariate
-shift completely, at every severity we tested — the first time either
-original detector has gone completely blind to the shift type they were
-specifically built for.** The detector that ends up most reliable here is
-`pred_prop_psi` — previously our label-shift specialist, now unexpectedly
-the best covariate-shift detector on this dataset.
+| shift | metric | score AUC | sens. @ 1% FAR | sens. @ 5% FAR |
+|---|---|---|---|---|
+| covariate | psi_agg | 0.79 | 0.67 | 0.88 |
+| covariate | kl_agg | 0.79 | 0.67 | 0.88 |
+| covariate | centroid_dist | 0.96 | 0.99 | 1.00 |
+| covariate | pred_prop_psi | 0.89 | 0.93 | 0.99 |
+| covariate | concept_signal | 0.52 | 0.23 | 0.66 |
+| covariate | ks_baseline | 1.00 | 1.00 | 1.00 |
+| label | psi_agg | 0.89 | 0.96 | 1.00 |
+| label | kl_agg | 0.89 | 0.96 | 1.00 |
+| label | centroid_dist | 0.94 | 1.00 | 1.00 |
+| label | pred_prop_psi | 0.92 | 0.98 | 1.00 |
+| label | concept_signal | 0.91 | 1.00 | 1.00 |
+| label | ks_baseline | 0.91 | 0.99 | 1.00 |
+| concept | psi_agg | 0.50 | 0.21 | 0.51 |
+| concept | kl_agg | 0.50 | 0.24 | 0.51 |
+| concept | centroid_dist | 0.51 | 0.16 | 0.56 |
+| concept | pred_prop_psi | 0.51 | 0.26 | 0.59 |
+| concept | concept_signal | 0.98 | 1.00 | 1.00 |
+| concept | ks_baseline | 0.51 | 0.29 | 0.68 |
 
-**Our best explanation (not fully certain — flagged as such):**
-`hours-per-week`'s IQR is only 5 (on a 1-99 range, median 40). Our
-severity-scaling approach — the same one that worked well on the first
-two datasets — produces an injected shift of roughly 2-7 hours here,
-which is a small *absolute* change relative to the feature's overall
-range. PSI and KL both measure the raw shift in the feature's histogram
-directly, so a small absolute shift is a small histogram shift, and both
-struggle to detect it except at the largest severity. `pred_prop_psi`
-doesn't measure the raw feature shift at all — it measures how much the
-*model's predictions* change, and if the model has learned that
-`hours-per-week` matters a lot for predicting income, even a small shift
-in this feature can produce a *proportionally larger* shift in predicted
-probabilities. This is a plausible, mechanistically consistent
-explanation for what we measured, but we haven't independently verified
-it (e.g. by checking the model's actual feature-importance for
-`hours-per-week`) — flagging that limitation honestly rather than
-presenting the explanation as more certain than it is.
+#### The confirmation rule (k consecutive batches), lag and cost
 
-**Why PSI and KL diverge from each other here (not just from expectations):**
-less certain still. Our best guess is that this dataset's severity-scaled
-shift is closer to an additive mean-shift than a shape change, and PSI's
-linear per-bin penalty vs. KL's log-ratio penalty may weight that
-differently — but we would want to inspect the actual per-bin
-probabilities directly before stating this as settled, and haven't done
-so here.
+An alert needs k consecutive batches above threshold. k = 2 is used everywhere else; this shows what k buys, for the best detector of each shift type, with the calibrated thresholds. Lag = batches after onset, detected runs only.
 
-### Label shift and concept drift: the pattern holds
+| shift | detector | k | sensitivity | false alarms | mean lag (batches) |
+|---|---|---|---|---|---|
+| covariate | pred_prop_psi | 1 | 0.84 | 0.08% | 4.5 |
+| covariate | pred_prop_psi | 2 | 0.60 | 0.00% | 4.8 |
+| covariate | pred_prop_psi | 3 | 0.49 | 0.00% | 5.9 |
+| covariate | pred_prop_psi | 4 | 0.41 | 0.00% | 5.7 |
+| label | pred_prop_psi | 1 | 0.89 | 0.08% | 3.5 |
+| label | pred_prop_psi | 2 | 0.72 | 0.00% | 4.9 |
+| label | pred_prop_psi | 3 | 0.55 | 0.00% | 5.5 |
+| label | pred_prop_psi | 4 | 0.50 | 0.00% | 6.2 |
+| concept | concept_signal | 1 | 1.00 | 0.17% | 1.9 |
+| concept | concept_signal | 2 | 0.97 | 0.00% | 3.8 |
+| concept | concept_signal | 3 | 0.82 | 0.00% | 4.4 |
+| concept | concept_signal | 4 | 0.73 | 0.00% | 4.7 |
 
-Both of these matched the earlier datasets closely: `pred_prop_psi`
-remains the strongest label-shift detector (0.97, similar to Taiwan's
-1.00), and `concept_signal` remains the only real concept-drift detector,
-here even stronger (1.00) than on either earlier dataset.
+![confirmation rule](../../datasets/adult_income/report_assets_adult/debounce_tradeoff.png)
 
-## 5. What This Means for the Project's Overall Claims
+![lag vs severity](../../datasets/adult_income/report_assets_adult/lag_vs_severity.png)
 
-**The claim that gets stronger:** "the system as a whole (all five
-detectors plus `diagnosis.py`) generalizes across domains" — still holds.
-Some detector correctly caught every shift type on every dataset tested,
-across three genuinely different datasets now.
+![cost vs capability](../../datasets/adult_income/report_assets_adult/cost_capability.png)
 
-**The claim that needs revising:** "PSI/KL are reliably *the* covariate-shift
-detectors" no longer holds universally. On this dataset, they're the
-*weakest* link for covariate shift, and the detector we built to solve an
-entirely different problem (label shift) turned out to be the strongest.
-**We think the more accurate, more defensible claim is: "which detector
-best catches covariate shift depends on how large the calibrated shift
-ends up being relative to that feature's typical scale — and that
-relationship is not yet fully understood from three datasets."** This is
-a more honest, more useful thing to write in a report than the cleaner
-but now-contradicted claim we made after only two datasets.
+#### Against the named baseline
 
-## 6. System Cost
+Baseline = per-feature two-sample Kolmogorov-Smirnov test, Bonferroni-corrected, alpha 0.01, same 2-consecutive-batch rule, same runs, no tuning.
 
-The full five-detector pipeline runs fastest on this dataset of the
-three tested (~15ms/batch, ~65 batches/sec) — this dataset has only 6
-numeric features (vs. 10 and 20 on the other two), so PSI/KL/embedding
-drift all have less work to do. Same relative ranking otherwise:
-`concept_signal` is the most expensive single detector.
+| shift | best of the five | its sens. | its false alarms | KS baseline sens. | KS false alarms | gain vs. baseline |
+|---|---|---|---|---|---|---|
+| concept | concept_signal | 0.97 | 0.00% | 0.00 | 0.00% | 0.97 |
+| covariate | pred_prop_psi | 0.60 | 0.00% | 1.00 | 0.00% | -0.40 |
+| label | pred_prop_psi | 0.72 | 0.00% | 0.61 | 0.00% | 0.11 |
 
-`report_assets_adult/system_info.json` records the exact environment this
-was run in, per the main README's §8.2.
+#### What diagnosis.py says when something alerts
 
-## 7. How to Run This Yourself
+Share of post-onset alerting batches by verdict, per true injected shift.
 
-**This README lives in `datasets/adult_income/`.** The detection code
-(`drift_monitor/`) is two folders up, at the repo root, shared unmodified
-with both other datasets — see the repo's top-level `README.md`.
+| true_shift_type | concept_or_mild_label | covariate | label | label_or_subtle_covariate |
+|---|---|---|---|---|
+| concept | 100.0% | 0.0% | 0.0% | 0.0% |
+| covariate | 0.0% | 75.6% | 0.0% | 24.4% |
+| label | 3.3% | 0.0% | 56.3% | 40.3% |
 
-From the **repo root**, install dependencies once (covers all three datasets):
+#### Reference model
 
-```bash
-pip install -r drift_monitor/requirements.txt
-```
+| reference base rate | reference mean pred. | held-out base rate | held-out mean pred. | held-out accuracy | held-out ROC-AUC |
+|---|---|---|---|---|---|
+| 0.2405 | 0.2405 | 0.2388 | 0.2388 | 0.8158 | 0.8308 |
 
-Then, from **this folder**:
+#### Cost
 
-```bash
-cd datasets/adult_income    # if not already here
-python generate_report_assets_adult.py
-```
+| detector | per_batch_ms | one_time_fit_ms | throughput_batches_per_sec | approx_memory_kb |
+|---|---|---|---|---|
+| psi_agg + kl_agg (shared cached bins) | 0.37 | 3.12 | 2722.00 | 1.30 |
+| centroid_dist | 5.46 | 11.29 | 183.20 | 289.40 |
+| pred_prop_psi | 5.48 | 22.43 | 182.50 | 101.30 |
+| concept_signal | 4.95 | 6.94 | 202.00 | 3.50 |
+| ALL 5 COMBINED (full pipeline per batch) | 16.25 | 40.66 | 61.50 | 395.50 |
+| ks_baseline (named baseline, not part of the 5) | 2.01 | 1.97 | 498.40 | 1145.50 |
 
-`adult_income.csv` already sits in this same folder. Outputs land in
-`report_assets_adult/` — same file structure as the other two dataset
-folders. Takes roughly 3-5 minutes at 20 repetitions per scenario (this
-is the smallest of the three datasets by feature count, hence the
-fastest run).
+#### Failure modes
+
+90 (shift, severity, onset, detector) cells have sensitivity below 0.5 or mean lag above 5 batches - see `datasets/adult_income/report_assets_adult/failure_modes.csv`.
+
+#### Provenance
+
+`datasets/adult_income/report_assets_adult/system_info.json`: platform=Linux-6.18.44-fc-v553-x86_64-with-glibc2.39, python_version=3.12.3, numpy_version=2.4.4, pandas_version=3.0.2, sklearn_version=1.8.0, scipy_version=1.17.1, matplotlib_version=3.10.0, generated 2026-11-17T03:54:09Z. Run time 210s.
+<!-- END:dataset_results -->

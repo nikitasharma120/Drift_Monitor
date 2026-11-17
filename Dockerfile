@@ -1,18 +1,11 @@
-# Pins the exact environment this project's results were verified against.
-# Built to resolve, permanently, the reproducibility saga documented in the
-# Phase 5 report's Appendix A: four separate times, differences in the host
-# machine's Python/library setup produced different results from identical
-# code and data. A container removes that variable entirely -- "works on my
-# machine" becomes "works in this exact machine, always."
-
+# Pins the exact library versions this project's results were generated with.
+# Everything runs from /app (the repo root). The dataset CSVs are copied into the image so
+# results can be regenerated inside the container.
 FROM python:3.12-slim
 
 WORKDIR /app
 
-# System build tools needed by scipy/scikit-learn/matplotlib wheels on some
-# platforms; kept minimal and removed from the final layer where possible.
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
+RUN apt-get update && apt-get install -y --no-install-recommends build-essential \
     && rm -rf /var/lib/apt/lists/*
 
 COPY drift_monitor/requirements.txt ./drift_monitor/requirements.txt
@@ -20,8 +13,7 @@ RUN pip install --no-cache-dir -r drift_monitor/requirements.txt
 
 COPY . .
 
-# Verify the pinned versions actually installed correctly at build time,
-# not just that pip exited 0 -- catches silent resolver substitutions.
+# Fail the build if pip silently resolved different versions than the ones in requirements.txt.
 RUN python -c "\
 import matplotlib, sklearn, numpy, pandas, scipy; \
 assert sklearn.__version__ == '1.8.0', sklearn.__version__; \
@@ -33,6 +25,14 @@ print('All pinned versions verified.')"
 
 EXPOSE 8501
 
-# Default: launch the dashboard. Override with `docker run ... python generate_report_assets.py`
-# to regenerate report_assets/ instead.
+# Default: the dashboard (all three datasets are selectable in the sidebar).
+#   docker build -t drift-monitor .
+#   docker run -p 8501:8501 drift-monitor
+#
+# Regenerate EVERY result and doc number (outputs land in ./datasets/*/report_assets*, REPORT.md, README.md):
+#   docker run --rm -v "$(pwd)":/app drift-monitor python run_all.py
+# One dataset only (paths are relative to /app, not to the dataset folder):
+#   docker run --rm -v "$(pwd)":/app drift-monitor python datasets/give_me_some_credit/generate_report_assets.py
+# Tests:
+#   docker run --rm drift-monitor python -m pytest tests/ -q
 CMD ["streamlit", "run", "drift_monitor/dashboard_app.py", "--server.address=0.0.0.0", "--server.port=8501"]
