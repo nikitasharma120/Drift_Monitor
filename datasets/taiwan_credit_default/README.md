@@ -138,12 +138,12 @@ Share of post-onset alerting batches by verdict, per true injected shift.
 
 | detector | per_batch_ms | one_time_fit_ms | throughput_batches_per_sec | approx_memory_kb |
 |---|---|---|---|---|
-| psi_agg + kl_agg (shared cached bins) | 1.24 | 8.72 | 808.60 | 4.40 |
-| centroid_dist | 7.05 | 21.65 | 141.90 | 180.70 |
-| pred_prop_psi | 7.13 | 40.29 | 140.20 | 67.10 |
-| concept_signal | 6.91 | 10.77 | 144.80 | 4.90 |
-| ALL 5 COMBINED (full pipeline per batch) | 22.32 | 72.71 | 44.80 | 257.10 |
-| ks_baseline (named baseline, not part of the 5) | 5.22 | 4.37 | 191.60 | 2345.70 |
+| psi_agg + kl_agg (shared cached bins) | 3.02 | 14.73 | 330.80 | 4.40 |
+| centroid_dist | 12.72 | 34.96 | 78.60 | 180.70 |
+| pred_prop_psi | 12.91 | 68.55 | 77.40 | 67.10 |
+| concept_signal | 14.38 | 17.63 | 69.50 | 4.90 |
+| ALL 5 COMBINED (full pipeline per batch) | 43.04 | 121.14 | 23.20 | 257.10 |
+| ks_baseline (named baseline, not part of the 5) | 9.13 | 7.14 | 109.60 | 2345.70 |
 
 #### Failure modes
 
@@ -151,5 +151,5 @@ Share of post-onset alerting batches by verdict, per true injected shift.
 
 #### Provenance
 
-`datasets/taiwan_credit_default/report_assets_taiwan/system_info.json`: platform=Linux-6.18.44-fc-v553-x86_64-with-glibc2.39, python_version=3.12.3, numpy_version=2.4.4, pandas_version=3.0.2, sklearn_version=1.8.0, scipy_version=1.17.1, matplotlib_version=3.10.0, generated 2026-11-17T03:50:38Z. Run time 326s.
+`datasets/taiwan_credit_default/report_assets_taiwan/system_info.json`: platform=Windows-10-10.0.26200-SP0, python_version=3.11.0, numpy_version=2.4.4, pandas_version=3.0.2, sklearn_version=1.8.0, scipy_version=1.17.1, matplotlib_version=3.10.0, generated 2026-11-17T04:34:23Z. Run time 590s.
 <!-- END:dataset_results -->

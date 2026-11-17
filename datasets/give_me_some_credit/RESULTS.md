@@ -124,12 +124,12 @@ Share of post-onset alerting batches by verdict, per true injected shift.
 
 | detector | per_batch_ms | one_time_fit_ms | throughput_batches_per_sec | approx_memory_kb |
 |---|---|---|---|---|
-| psi_agg + kl_agg (shared cached bins) | 1.05 | 10.18 | 953.10 | 2.10 |
-| centroid_dist | 8.99 | 27.60 | 111.30 | 708.50 |
-| pred_prop_psi | 7.86 | 54.48 | 127.30 | 242.00 |
-| concept_signal | 6.78 | 12.96 | 147.50 | 4.20 |
-| ALL 5 COMBINED (full pipeline per batch) | 24.67 | 95.04 | 40.50 | 956.80 |
-| ks_baseline (named baseline, not part of the 5) | 7.96 | 8.25 | 125.60 | 4698.20 |
+| psi_agg + kl_agg (shared cached bins) | 2.04 | 15.48 | 490.20 | 2.10 |
+| centroid_dist | 15.45 | 45.55 | 64.70 | 708.50 |
+| pred_prop_psi | 16.89 | 97.43 | 59.20 | 242.00 |
+| concept_signal | 13.43 | 28.64 | 74.50 | 4.20 |
+| ALL 5 COMBINED (full pipeline per batch) | 47.80 | 171.62 | 20.90 | 956.80 |
+| ks_baseline (named baseline, not part of the 5) | 11.64 | 11.45 | 85.90 | 4698.20 |
 
 ### Failure modes
 
@@ -137,4 +137,4 @@ Share of post-onset alerting batches by verdict, per true injected shift.
 
 ### Provenance
 
-`datasets/give_me_some_credit/report_assets/system_info.json`: platform=Linux-6.18.44-fc-v553-x86_64-with-glibc2.39, python_version=3.12.3, numpy_version=2.4.4, pandas_version=3.0.2, sklearn_version=1.8.0, scipy_version=1.17.1, matplotlib_version=3.10.0, generated 2026-11-17T04:00:36Z. Run time 385s.
+`datasets/give_me_some_credit/report_assets/system_info.json`: platform=Windows-10-10.0.26200-SP0, python_version=3.11.0, numpy_version=2.4.4, pandas_version=3.0.2, sklearn_version=1.8.0, scipy_version=1.17.1, matplotlib_version=3.10.0, generated 2026-11-17T04:24:33Z. Run time 661s.

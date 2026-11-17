@@ -1,7 +1,7 @@
 detector,per_batch_ms,per_batch_ms_std,one_time_fit_ms,throughput_batches_per_sec,approx_memory_kb
-psi_agg + kl_agg (shared cached bins),1.0492,0.273,10.18,953.1,2.1
-centroid_dist,8.9851,1.3575,27.6,111.3,708.5
-pred_prop_psi,7.8582,0.2118,54.48,127.3,242.0
-concept_signal,6.7794,0.9115,12.96,147.5,4.2
-ALL 5 COMBINED (full pipeline per batch),24.6719,,95.04,40.5,956.8
-"ks_baseline (named baseline, not part of the 5)",7.9645,0.8376,8.25,125.6,4698.2
+psi_agg + kl_agg (shared cached bins),2.04,0.5137,15.48,490.2,2.1
+centroid_dist,15.4496,1.1816,45.55,64.7,708.5
+pred_prop_psi,16.8868,2.9737,97.43,59.2,242.0
+concept_signal,13.4284,0.9236,28.64,74.5,4.2
+ALL 5 COMBINED (full pipeline per batch),47.8048,,171.62,20.9,956.8
+"ks_baseline (named baseline, not part of the 5)",11.6395,0.5436,11.45,85.9,4698.2

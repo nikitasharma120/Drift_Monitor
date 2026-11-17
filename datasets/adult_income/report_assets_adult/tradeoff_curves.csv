@@ -2180,7 +2180,7 @@ covariate,severe,concept_signal,0.0290092,0,0.025
 covariate,severe,concept_signal,0.033192,0,0
 covariate,severe,concept_signal,0.0478012,0,0
 covariate,severe,concept_signal,0.0478012,0,0
-covariate,all,ks_baseline,-0,0.9,1
+covariate,all,ks_baseline,0,0.9,1
 covariate,all,ks_baseline,0.0285075,0.0741667,1
 covariate,all,ks_baseline,0.0617699,0.0625,1
 covariate,all,ks_baseline,0.101793,0.055,1
@@ -2264,7 +2264,7 @@ covariate,all,ks_baseline,297.964,0,0.308333
 covariate,all,ks_baseline,299.218,0,0.308333
 covariate,all,ks_baseline,300,0,0.3
 covariate,all,ks_baseline,300,0,0
-covariate,mild,ks_baseline,-0,0.9,1
+covariate,mild,ks_baseline,0,0.9,1
 covariate,mild,ks_baseline,0.0251417,0.0625,1
 covariate,mild,ks_baseline,0.079579,0.0525,1
 covariate,mild,ks_baseline,0.118605,0.0425,1
@@ -2357,7 +2357,7 @@ covariate,mild,ks_baseline,231.92,0,0
 covariate,mild,ks_baseline,234.687,0,0
 covariate,mild,ks_baseline,248.477,0,0
 covariate,mild,ks_baseline,248.478,0,0
-covariate,moderate,ks_baseline,-0,0.9,1
+covariate,moderate,ks_baseline,0,0.9,1
 covariate,moderate,ks_baseline,0.0136914,0.08,1
 covariate,moderate,ks_baseline,0.0563504,0.07,1
 covariate,moderate,ks_baseline,0.111137,0.0675,1
@@ -2452,7 +2452,7 @@ covariate,moderate,ks_baseline,251.77,0,0
 covariate,moderate,ks_baseline,253.634,0,0
 covariate,moderate,ks_baseline,259.196,0,0
 covariate,moderate,ks_baseline,259.196,0,0
-covariate,severe,ks_baseline,-0,0.9,1
+covariate,severe,ks_baseline,0,0.9,1
 covariate,severe,ks_baseline,0.00012099,0.0875,1
 covariate,severe,ks_baseline,0.0348037,0.0775,1
 covariate,severe,ks_baseline,0.0617699,0.0625,1
@@ -4987,7 +4987,7 @@ label,mild,ks_baseline,2.63507,0,0
 label,mild,ks_baseline,3.42206,0,0
 label,mild,ks_baseline,5.36202,0,0
 label,mild,ks_baseline,5.36203,0,0
-label,moderate,ks_baseline,-0,0.9,1
+label,moderate,ks_baseline,0,0.9,1
 label,moderate,ks_baseline,0.00287956,0.07,1
 label,moderate,ks_baseline,0.0210205,0.0575,1
 label,moderate,ks_baseline,0.0672027,0.05,1
@@ -5078,7 +5078,7 @@ label,moderate,ks_baseline,4.17715,0,0.025
 label,moderate,ks_baseline,4.60806,0,0.025
 label,moderate,ks_baseline,7.1348,0,0
 label,moderate,ks_baseline,7.13481,0,0
-label,severe,ks_baseline,-0,0.9,1
+label,severe,ks_baseline,0,0.9,1
 label,severe,ks_baseline,0.00350164,0.1175,1
 label,severe,ks_baseline,0.0304847,0.1025,1
 label,severe,ks_baseline,0.0781075,0.09,1
@@ -7509,7 +7509,7 @@ concept,severe,concept_signal,0.199195,0,0
 concept,severe,concept_signal,0.203934,0,0
 concept,severe,concept_signal,0.220626,0,0
 concept,severe,concept_signal,0.220626,0,0
-concept,all,ks_baseline,0,0.9,1
+concept,all,ks_baseline,-0,0.9,1
 concept,all,ks_baseline,0.0081672,0.075,0.833333
 concept,all,ks_baseline,0.02945,0.0666667,0.8
 concept,all,ks_baseline,0.0427024,0.065,0.775
@@ -7628,7 +7628,7 @@ concept,moderate,ks_baseline,1.42039,0,0
 concept,moderate,ks_baseline,1.6171,0,0
 concept,moderate,ks_baseline,2.54884,0,0
 concept,moderate,ks_baseline,2.54884,0,0
-concept,severe,ks_baseline,-0,0.9,1
+concept,severe,ks_baseline,0,0.9,1
 concept,severe,ks_baseline,0.00287956,0.095,0.9
 concept,severe,ks_baseline,0.0134681,0.085,0.875
 concept,severe,ks_baseline,0.02945,0.08,0.85

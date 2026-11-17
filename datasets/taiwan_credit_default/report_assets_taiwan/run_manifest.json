@@ -23,6 +23,6 @@
   },
   "target_feature": "BILL_AMT1",
   "consecutive_batches_required": 2,
-  "runtime_seconds": 325.7,
+  "runtime_seconds": 590.1,
   "quick_mode": false
 }

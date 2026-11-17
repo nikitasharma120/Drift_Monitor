@@ -53,8 +53,8 @@
     },
     {
       "metric": "centroid_dist",
-      "clean_median": 0.0375231311944995,
-      "clean_q99": 0.08318248038892283,
+      "clean_median": 0.03752313119449952,
+      "clean_q99": 0.08318248038892292,
       "floor_moderate": 1.0,
       "calibrated_moderate": 1.0,
       "calibrated_significant": 2.0,
